@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -53,11 +54,30 @@ public class LoginActivity extends Activity {
         btns = (LinearLayout) findViewById(R.id.btns);
         bienvenu = (TextView) findViewById(R.id.bienvenu);
         phone = (AutoCompleteTextView) findViewById(R.id.phoneTxt);
-
         signupbtn.setBackgroundColor(Color.WHITE);
         loginbtn.setBackgroundColor(Color.WHITE);
 
-        startYTranslation(imageView);
+        loginbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, CheckPatternActivity.class));
+            }
+        });
+
+
+        if ((getIntent().getStringExtra("class") != null) && (getIntent().getStringExtra("class").equals("SplashScreen"))) {
+
+            startYTranslation(imageView);
+        } else {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+
+            imageView.setLayoutParams(layoutParams);
+            form.setVisibility(View.VISIBLE);
+            btns.setVisibility(View.VISIBLE);
+
+        }
+
 
 
     }
