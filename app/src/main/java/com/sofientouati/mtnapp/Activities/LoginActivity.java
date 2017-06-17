@@ -4,22 +4,24 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,37 +32,86 @@ import com.sofientouati.mtnapp.Objects.TelephonyInfo;
 import com.sofientouati.mtnapp.R;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoginActivity extends Activity {
     private ImageView imageView;
-    private RelativeLayout mainlay, form;
+    private RelativeLayout mainlay, login, signup;
     private LinearLayout btns;
     private Button signupbtn, loginbtn;
     private TextView bienvenu;
-    private AutoCompleteTextView phone;
+    private AutoCompleteTextView phonelog, phonesign, chose;
+    private EditText logpass, signpass, signpass2;
     private ArrayList<String> numbers = new ArrayList<>();
-
+    private String status;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//getting views
+        /*getting views*/
+        //layouts
         imageView = (ImageView) findViewById(R.id.logoapp);
         mainlay = (RelativeLayout) findViewById(R.id.mainlay);
-        form = (RelativeLayout) findViewById(R.id.form);
+        login = (RelativeLayout) findViewById(R.id.form);
+        signup = (RelativeLayout) findViewById(R.id.signupLay);
+        //btns
         signupbtn = (Button) findViewById(R.id.signupbtn);
         loginbtn = (Button) findViewById(R.id.loginbtn);
         btns = (LinearLayout) findViewById(R.id.btns);
+        //txtviews
         bienvenu = (TextView) findViewById(R.id.bienvenu);
-        phone = (AutoCompleteTextView) findViewById(R.id.phoneTxt);
-        signupbtn.setBackgroundColor(Color.WHITE);
-        loginbtn.setBackgroundColor(Color.WHITE);
+        //edit texts
+        phonelog = (AutoCompleteTextView) findViewById(R.id.phoneTxt);
+        phonesign = (AutoCompleteTextView) findViewById(R.id.signPhoneTxt);
+        logpass = (EditText) findViewById(R.id.logpassTxt);
+        signpass = (EditText) findViewById(R.id.passTxt);
+        signpass2 = (EditText) findViewById(R.id.conPassTxt);
 
+        /*listeners*/
+        logpass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                performAction();
+                return true;
+            }
+        });
+        signpass2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                performAction();
+                return true;
+            }
+        });
         loginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, CheckPatternActivity.class));
+                if (status == null) {
+                    getPermissions(phonelog);
+                    startXTranslation(bienvenu, 300, 1500, true, 0);
+                    startXTranslation(login, -1000, 50, false, 500);
+                    signupbtn.setText("Annuler");
+                    status = "login";
+                    return;
+                }
+                performAction();
+            }
+        });
+        signupbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (status == null) {
+                    getPermissions(phonesign);
+                    startXTranslation(bienvenu, 300, 1500, true, 0);
+                    startXTranslation(signup, -1000, 50, false, 500);
+                    signupbtn.setText("Annuler");
+                    loginbtn.setText("creer un compte");
+                    status = "signup";
+                    return;
+                }
+                cancelAction();
             }
         });
 
@@ -73,35 +124,92 @@ public class LoginActivity extends Activity {
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
             imageView.setLayoutParams(layoutParams);
-            form.setVisibility(View.VISIBLE);
+            login.setVisibility(View.VISIBLE);
             btns.setVisibility(View.VISIBLE);
 
         }
 
 
-
     }
 
+    //actions
+    private void cancelAction() {
+        if (status.equals("login")) {
+            status = null;
+            startXTranslation(login, 50, -1500, true, 0);
+            startXTranslation(bienvenu, 1500, 300, false, 0);
+            signupbtn.setText("créer un compte");
+            loginbtn.setText("Connexion");
+            logpass.setText("");
+            logpass.setError(null);
+            phonelog.setText("");
+            phonelog.setError(null);
 
-    private ArrayList<String> getPermissions() {
+            return;
+
+        }
+        if (status.equals("signup")) {
+            status = null;
+            startXTranslation(signup, 50, -1500, true, 0);
+            startXTranslation(bienvenu, 1500, 300, false, 0);
+            signupbtn.setText("créer un compte");
+            loginbtn.setText("connexion");
+            signpass2.setText("");
+            signpass2.setError(null);
+            signpass.setText("");
+            signpass.setError(null);
+            phonesign.setText("");
+            phonesign.setError(null);
+            return;
+
+        }
+    }
+
+    private void performAction() {
+        if (status.equals("login")) {
+            progressDialog = Methods.showProgressBar(LoginActivity.this, "Chargement");
+            if (submitLoginForm()) {
+                logpass.setText("");
+                phonelog.setText("");
+                Methods.dismissProgressBar(progressDialog);
+                startActivity(new Intent(LoginActivity.this, CheckPatternActivity.class));
+            } else
+                Methods.dismissProgressBar(progressDialog);
+            return;
+        }
+        if (status.equals("signup")) {
+            progressDialog = Methods.showProgressBar(LoginActivity.this, "Création de compte");
+            if (submitSingupForm()) {
+                signpass2.setText("");
+                signpass.setText("");
+                phonesign.setText("");
+                Methods.dismissProgressBar(progressDialog);
+                startActivity(new Intent(LoginActivity.this, CheckPatternActivity.class));
+                return;
+            }
+        }
+    }
+
+    //getting phone number
+    private ArrayList<String> getPermissions(AutoCompleteTextView phone) {
         ArrayList<String> x = new ArrayList<String>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String permission = Manifest.permission.READ_PHONE_STATE;
             Log.i("checkPermission: ", permission);
             if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-
+                chose = phone;
                 ActivityCompat.requestPermissions(this, new String[]{permission}, 1);
             } else {
 
-                getPhoneNumber();
+                getPhoneNumber(phone);
             }
         } else {
-            getPhoneNumber();
+            getPhoneNumber(phone);
         }
         return x;
     }
 
-    private void getPhoneNumber() {
+    private void getPhoneNumber(AutoCompleteTextView phone) {
         TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(this);
 
         String imsiSIM1 = telephonyInfo.getImsiSIM1();
@@ -115,6 +223,7 @@ public class LoginActivity extends Activity {
         if (isSIM1Ready) {
 
             strMobileNumber = tm.getLine1Number();
+            numbers = new ArrayList<String>();
             numbers.add(strMobileNumber);
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, numbers);
             phone.setAdapter(arrayAdapter);
@@ -130,8 +239,8 @@ public class LoginActivity extends Activity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Methods.showSnackBar(form, "permis");
-                    getPhoneNumber();
+                    Methods.showSnackBar(login, "permis");
+                    getPhoneNumber(chose);
 
 
 //                    captureImage();
@@ -140,7 +249,7 @@ public class LoginActivity extends Activity {
                     // contacts-related task you need to do.
 
                 } else {
-                    Methods.showSnackBar(form, "non permis");
+                    Methods.showSnackBar(login, "non permis");
 
 
                     // permission denied, boo! Disable the
@@ -152,9 +261,46 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private int x = 0;
+    @Override
+    public void onBackPressed() {
+        if (status != null && status.equals("login")) {
+            status = null;
+            startXTranslation(login, 50, -1500, true, 0);
+            startXTranslation(bienvenu, 1500, 300, false, 0);
+            signupbtn.setText("créer un compte");
+            loginbtn.setText("Connexion");
+            logpass.setText("");
+            logpass.setError(null);
+            phonelog.setText("");
+            phonelog.setError(null);
+
+            return;
+
+        }
+        if (status != null && status.equals("signup")) {
+            status = null;
+            startXTranslation(signup, 50, -1500, true, 0);
+            startXTranslation(bienvenu, 1500, 300, false, 0);
+            signupbtn.setText("créer un compte");
+            loginbtn.setText("connexion");
+            signpass2.setText("");
+            signpass2.setError(null);
+            signpass.setText("");
+            signpass.setError(null);
+            phonesign.setText("");
+            phonesign.setError(null);
+            return;
+
+
+        }
+
+        super.onBackPressed();
+    }
+
 
     //animations
+
+
     private void fadeIn(View v) {
         v.setVisibility(View.VISIBLE);
         final Animation animation1 = new AlphaAnimation(0.0f, 1.0f);
@@ -168,7 +314,6 @@ public class LoginActivity extends Activity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 btns.setVisibility(View.VISIBLE);
-                startXTranslation(bienvenu, 300, 1500, true, 1000);
 
 
             }
@@ -195,10 +340,8 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (x == 0) {
-                    fadeIn(bienvenu);
-                    x = 1;
-                }
+
+                fadeIn(bienvenu);
 
 
             }
@@ -217,7 +360,7 @@ public class LoginActivity extends Activity {
         animator.start();
     }
 
-    private void startXTranslation(final View v, int x, int y, final Boolean first, int delay) {
+    private void startXTranslation(final View v, int x, int y, final boolean first, int delay) {
         ObjectAnimator animator = ObjectAnimator.ofFloat(v, "x", x, y)
                 .setDuration(1000);
         animator.setStartDelay(delay);
@@ -229,12 +372,8 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (first == true) {
-                    startXTranslation(form, -1000, 50, false, 0);
-                    return;
-                }
-                getPermissions();
-
+                if (first)
+                    v.setVisibility(View.GONE);
             }
 
             @Override
@@ -249,4 +388,78 @@ public class LoginActivity extends Activity {
         });
         animator.start();
     }
+
+
+    //validation process
+    private boolean submitLoginForm() {
+        if (!validatePhone(phonelog) || !validatePassword(logpass)) {
+            validatePhone(phonelog);
+            validatePassword(logpass);
+            Methods.dismissProgressBar(progressDialog);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean submitSingupForm() {
+        if (!validatePhone(phonesign) || !validatePassword(signpass) || !validateConfirmPassword()) {
+            validatePhone(phonesign);
+            validatePassword(signpass);
+            validateConfirmPassword();
+
+            Methods.dismissProgressBar(progressDialog);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validatePhone(AutoCompleteTextView phone) {
+        String phoneNum = phone.getText().toString().trim();
+
+
+        if (!android.util.Patterns.PHONE.matcher(phoneNum).matches()) {
+            if (phoneNum.isEmpty()) {
+                phone.setError("champs obligatoire");
+                return false;
+            }
+            phone.setError("format de numéro de téléphone invalide");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validatePassword(EditText pass) {
+        String password = pass.getText().toString().trim();
+        Pattern pattern = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,})$");
+        Matcher match = pattern.matcher(password);
+
+
+        if (!match.matches()) {
+            if (password.isEmpty()) {
+                pass.setError("champs obligatoire");
+                return false;
+            }
+            pass.setError("mot de passe doit au moins six character contenant une lettre majuscule,miniscule et un chiffre");
+            return false;
+        }
+
+
+        return true;
+
+    }
+
+    private boolean validateConfirmPassword() {
+        String password = signpass2.getText().toString().trim();
+        if (password.isEmpty() || !password.equals(signpass.getText().toString().trim())) {
+            if (password.isEmpty())
+                signpass2.setError("champs obligatoire");
+
+            if (!password.equals(signpass.getText().toString().trim()))
+                signpass2.setError("les 2 mots de passes ne sont pas les mêmes ");
+
+            return false;
+        }
+        return true;
+    }
 }
+

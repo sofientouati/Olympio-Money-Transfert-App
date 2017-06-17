@@ -44,7 +44,17 @@
         android:visibility="gone">
 
         <Button
+            android:id="@+id/loginbtn"
+            android:layout_marginBottom="20sp"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Connexion" />
+
+        <Button
             android:id="@+id/signupbtn"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Créer un Compte" />
@@ -57,39 +67,96 @@
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20sp"
+        android:layout_margin="15sp"
         android:visibility="gone">
+        <!--<TextView-->
+        <!--android:id="@id/text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:textSize="20sp"-->
+        <!--android:textStyle="bold"-->
+        <!--android:paddingBottom="10sp"-->
+        <!--android:textColor="#fff"-->
+        <!--android:text="entrer votre numéro de Téléphone "/>-->
 
         <AutoCompleteTextView
+
             android:id="@+id/phoneTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext"
             android:hint="Numéro de Télephone"
+            android:imeOptions="actionNext"
+            android:nextFocusDown="@+id/logpassTxt"
             android:layout_marginBottom="10sp"
             android:inputType="phone|textAutoComplete"
             android:padding="10sp" />
 
         <EditText
-            android:id="@+id/passTxt"
+            android:id="@+id/logpassTxt"
+            android:layout_below="@id/phoneTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/phoneTxt"
             android:background="@drawable/edittext"
-            android:hint="Mot de Passe"
+            android:hint="mot de passe"
+            android:imeOptions="actionDone"
             android:inputType="textPassword"
             android:padding="10sp" />
 
-        <Button
-            android:id="@+id/loginbtn"
-            android:layout_below="@id/passTxt"
-            android:layout_marginTop="20sp"
-            android:layout_marginRight="50sp"
-            android:layout_marginLeft="50sp"
-            android:layout_centerHorizontal="true"
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/signupLay"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20sp"
+        android:visibility="gone">
+
+        <!--<TextView-->
+        <!--android:id="@+id/text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:textSize="15sp"-->
+        <!--android:textStyle="bold"-->
+        <!--android:paddingBottom="10sp"-->
+        <!--android:textColor="#fff"-->
+        <!--android:text="entrer votre mot de passe"/>-->
+        <AutoCompleteTextView
+            android:id="@+id/signPhoneTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="login" />
+            android:background="@drawable/edittext"
+            android:hint="Numéro de Télephone"
+            android:imeOptions="actionNext"
+            android:layout_marginBottom="10sp"
+            android:inputType="phone|textAutoComplete"
+            android:padding="10sp" />
+        <EditText
+            android:layout_below="@id/signPhoneTxt"
+            android:id="@+id/passTxt"
+            android:imeOptions="actionNext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext"
+            android:hint="mot de passe"
+            android:inputType="textPassword"
+            android:padding="10sp" />
+
+        <EditText
+            android:id="@+id/conPassTxt"
+            android:layout_marginTop="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:background="@drawable/edittext"
+            android:layout_below="@id/passTxt"
+            android:hint="Répéter mot de passe"
+            android:inputType="textPassword"
+            android:padding="10sp" />
 
 
     </RelativeLayout>

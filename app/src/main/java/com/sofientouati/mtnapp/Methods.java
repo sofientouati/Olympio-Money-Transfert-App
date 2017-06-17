@@ -19,8 +19,16 @@ public class Methods {
     }
 
     //progress bar
-    public static void showProgressBar(Context context, ProgressDialog progressDialog, String message) {
-        progressDialog = ProgressDialog.show(context, "", message, true);
+    public static ProgressDialog showProgressBar(Context context, String message) {
+
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMessage(message);
+        progressDialog.setCancelable(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        return progressDialog;
+
 
     }
 
