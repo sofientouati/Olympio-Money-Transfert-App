@@ -23,7 +23,10 @@
         <activity
             android:name=".Activities.LoginActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".Activities.CheckPatternActivity"></activity>
+        <activity android:name=".Activities.CheckPatternActivity" />
+        <activity
+            android:name=".Activities.HomeActivity"
+            android:theme="@style/MyMaterialThemeNoActionBar"></activity>
     </application>
 
 </manifest>

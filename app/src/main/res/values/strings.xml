@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MTN</string>
+    <string name="openNavigationDrawer">open Navigation Drawer</string>
+    <string name="closeavigationDrawer">Close Navigation Drawer</string>
 </resources>

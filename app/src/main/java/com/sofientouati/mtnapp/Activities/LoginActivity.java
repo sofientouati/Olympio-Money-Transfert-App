@@ -124,7 +124,7 @@ public class LoginActivity extends Activity {
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
             imageView.setLayoutParams(layoutParams);
-            login.setVisibility(View.VISIBLE);
+            bienvenu.setVisibility(View.VISIBLE);
             btns.setVisibility(View.VISIBLE);
 
         }
@@ -169,10 +169,12 @@ public class LoginActivity extends Activity {
         if (status.equals("login")) {
             progressDialog = Methods.showProgressBar(LoginActivity.this, "Chargement");
             if (submitLoginForm()) {
+
+                Methods.dismissProgressBar(progressDialog);
+                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 logpass.setText("");
                 phonelog.setText("");
-                Methods.dismissProgressBar(progressDialog);
-                startActivity(new Intent(LoginActivity.this, CheckPatternActivity.class));
+                finish();
             } else
                 Methods.dismissProgressBar(progressDialog);
             return;
@@ -415,14 +417,18 @@ public class LoginActivity extends Activity {
 
     private boolean validatePhone(AutoCompleteTextView phone) {
         String phoneNum = phone.getText().toString().trim();
+        Pattern pattern = Pattern.compile("(97.*\\d{6,}$)");
+        Matcher matcher = pattern.matcher(phoneNum);
+//        if (!android.util.Patterns.PHONE.matcher(phoneNum).matches()) {
+        if (!matcher.matches()) {
 
-
-        if (!android.util.Patterns.PHONE.matcher(phoneNum).matches()) {
+            phone.requestFocus();
             if (phoneNum.isEmpty()) {
                 phone.setError("champs obligatoire");
                 return false;
             }
             phone.setError("format de numéro de téléphone invalide");
+
             return false;
         }
         return true;
@@ -435,8 +441,10 @@ public class LoginActivity extends Activity {
 
 
         if (!match.matches()) {
+            pass.requestFocus();
             if (password.isEmpty()) {
                 pass.setError("champs obligatoire");
+
                 return false;
             }
             pass.setError("mot de passe doit au moins six character contenant une lettre majuscule,miniscule et un chiffre");
@@ -451,6 +459,7 @@ public class LoginActivity extends Activity {
     private boolean validateConfirmPassword() {
         String password = signpass2.getText().toString().trim();
         if (password.isEmpty() || !password.equals(signpass.getText().toString().trim())) {
+            signpass2.requestFocus();
             if (password.isEmpty())
                 signpass2.setError("champs obligatoire");
 
