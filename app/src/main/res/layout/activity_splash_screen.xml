@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/mtn"
+        android:src="@drawable/olympio"
         android:id="@+id/logoapp"
         android:layout_centerInParent="true" />
 

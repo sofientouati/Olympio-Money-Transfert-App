@@ -17,18 +17,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/mtn" />
+            android:src="@drawable/olympio" />
 
         <TextView
             android:id="@+id/bienvenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Bienvenu à&#xA;votre app"
+            android:text="Bienvenue"
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textColor="#fff"
-            android:textSize="30sp"
+            android:textSize="40sp"
             android:textStyle="bold"
             android:visibility="gone" />
     </RelativeLayout>

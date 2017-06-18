@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sofientouati.mtnapp.Methods;
+import com.sofientouati.mtnapp.Objects.SharedStrings;
 import com.sofientouati.mtnapp.Objects.TelephonyInfo;
 import com.sofientouati.mtnapp.R;
 
@@ -46,6 +48,8 @@ public class LoginActivity extends Activity {
     private ArrayList<String> numbers = new ArrayList<>();
     private String status;
     private ProgressDialog progressDialog;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,10 @@ public class LoginActivity extends Activity {
         logpass = (EditText) findViewById(R.id.logpassTxt);
         signpass = (EditText) findViewById(R.id.passTxt);
         signpass2 = (EditText) findViewById(R.id.conPassTxt);
+
+        //get Shared
+        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_NAME, Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         /*listeners*/
         logpass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -169,11 +177,11 @@ public class LoginActivity extends Activity {
         if (status.equals("login")) {
             progressDialog = Methods.showProgressBar(LoginActivity.this, "Chargement");
             if (submitLoginForm()) {
-
+                editor.putBoolean(SharedStrings.SHARED_ISLOGGED, true);
+                editor.putString(SharedStrings.SHARED_PHONE, phonelog.getText().toString());
+                editor.commit();
                 Methods.dismissProgressBar(progressDialog);
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                logpass.setText("");
-                phonelog.setText("");
                 finish();
             } else
                 Methods.dismissProgressBar(progressDialog);
@@ -182,9 +190,9 @@ public class LoginActivity extends Activity {
         if (status.equals("signup")) {
             progressDialog = Methods.showProgressBar(LoginActivity.this, "Création de compte");
             if (submitSingupForm()) {
-                signpass2.setText("");
-                signpass.setText("");
-                phonesign.setText("");
+                editor.putBoolean(SharedStrings.SHARED_ISLOGGED, true);
+                editor.putString(SharedStrings.SHARED_PHONE, phonelog.getText().toString());
+                editor.commit();
                 Methods.dismissProgressBar(progressDialog);
                 startActivity(new Intent(LoginActivity.this, CheckPatternActivity.class));
                 return;
