@@ -149,6 +149,33 @@ public class SplashScreenApp extends Activity {
             ActivityCompat.requestPermissions(this, new String[]{x.get(0), x.get(1)}, 1);
 
 
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+//                checkPermissions();
+                    Intent intent;
+                    boolean logged = sharedPreferences.getBoolean(SharedStrings.SHARED_ISLOGGED, false);
+                    Log.i("run: logged", String.valueOf(logged));
+                    if (!logged) {
+
+                        intent = new Intent(SplashScreenApp.this, LoginActivity.class);
+                        intent.putExtra("class", "SplashScreen");
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
+                        finish();
+
+
+                    } else {
+
+                        intent = new Intent(SplashScreenApp.this, HomeActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                }
+            }, 2000);
         }
+
     }
 }

@@ -47,7 +47,7 @@ public class LoginActivity extends Activity {
     private Button signupbtn, loginbtn;
     private TextView bienvenu;
     private AutoCompleteTextView phonelog, phonesign, chose;
-    private EditText logpass, signpass, signpass2;
+    private EditText logpass, signpass, name, lastname;
     private ArrayList<String> numbers = new ArrayList<>();
     private String status;
     private ProgressDialog progressDialog;
@@ -84,7 +84,9 @@ public class LoginActivity extends Activity {
         phonesign = (AutoCompleteTextView) findViewById(R.id.signPhoneTxt);
         logpass = (EditText) findViewById(R.id.logpassTxt);
         signpass = (EditText) findViewById(R.id.passTxt);
-        signpass2 = (EditText) findViewById(R.id.conPassTxt);
+        name = (EditText) findViewById(R.id.name);
+        lastname = (EditText) findViewById(R.id.lastname);
+
 
         //get Shared
         sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
@@ -98,7 +100,7 @@ public class LoginActivity extends Activity {
                 return true;
             }
         });
-        signpass2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        lastname.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 performAction();
@@ -128,7 +130,7 @@ public class LoginActivity extends Activity {
 
                     getPermissions(phonesign);
                     int bienvenuPo = (mainlay.getWidth() - bienvenu.getWidth()) / 2;
-                    int loginPo = (parent.getWidth() - signup.getWidth()) / 2;
+                    int loginPo = (parent.getWidth()) / 22;
                     startXTranslation(bienvenu, bienvenuPo, parent.getWidth(), true, 0);
                     startXTranslation(signup, -parent.getWidth(), 25, false, 500);
                     signupbtn.setText("Annuler");
@@ -148,11 +150,10 @@ public class LoginActivity extends Activity {
                     Log.i("run: ", String.valueOf(parent.getHeight()));
                     Log.i("run: ", String.valueOf(imageView.getHeight()));
                     int height = (parent.getHeight() - imageView.getHeight()) / 2;
-                    startYTranslation(imageView, height);
+                    startYTranslation(imageView, height, -100);
                 }
             };
             new Handler(Looper.getMainLooper()).post(r);
-
 
 
         } else {
@@ -164,7 +165,6 @@ public class LoginActivity extends Activity {
             btns.setVisibility(View.VISIBLE);
 
         }
-
 
 
     }
@@ -195,8 +195,8 @@ public class LoginActivity extends Activity {
             startXTranslation(bienvenu, parent.getWidth(), bienvenuPo, false, 0);
             signupbtn.setText("créer un compte");
             loginbtn.setText("connexion");
-            signpass2.setText("");
-            signpass2.setError(null);
+            name.setText("");
+            name.setError(null);
             signpass.setText("");
             signpass.setError(null);
             phonesign.setText("");
@@ -328,8 +328,8 @@ public class LoginActivity extends Activity {
             startXTranslation(bienvenu, 1500, bienvenuPo, false, 0);
             signupbtn.setText("créer un compte");
             loginbtn.setText("connexion");
-            signpass2.setText("");
-            signpass2.setError(null);
+            name.setText("");
+            name.setError(null);
             signpass.setText("");
             signpass.setError(null);
             phonesign.setText("");
@@ -371,8 +371,8 @@ public class LoginActivity extends Activity {
         v.startAnimation(animation1);
     }
 
-    private void startYTranslation(View v, int height) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(v, "y", height, 0)
+    private void startYTranslation(View v, int height, int height1) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(v, "y", height, height1)
                 .setDuration(1000);
         animator.setStartDelay(200);
 //        animator.setInterpolator();
@@ -438,22 +438,47 @@ public class LoginActivity extends Activity {
     //validation process
     private boolean submitLoginForm() {
         if (!validatePhone(phonelog) || !validatePassword(logpass)) {
-            validatePhone(phonelog);
-            validatePassword(logpass);
-            Methods.dismissProgressBar(progressDialog);
-            return false;
+            if (!validatePhone(phonelog)) {
+                phonelog.requestFocus();
+                Methods.dismissProgressBar(progressDialog);
+                return false;
+            }
+
+            if (validatePassword(logpass)) {
+                logpass.requestFocus();
+                Methods.dismissProgressBar(progressDialog);
+                return false;
+            }
+
+
         }
         return true;
     }
 
     private boolean submitSingupForm() {
-        if (!validatePhone(phonesign) || !validatePassword(signpass) || !validateConfirmPassword()) {
-            validatePhone(phonesign);
-            validatePassword(signpass);
-            validateConfirmPassword();
+        if (!validatePhone(phonesign) || !validatePassword(signpass) || !validateName(name) || !validateName(lastname)) {
+            if (!validatePhone(phonesign)) {
+                phonesign.requestFocus();
+                Methods.dismissProgressBar(progressDialog);
+                return false;
+            }
+            if (!validatePassword(signpass)) {
+                signpass.requestFocus();
+                Methods.dismissProgressBar(progressDialog);
+                return false;
+            }
+            if (!validateName(name)) {
+                name.requestFocus();
+                Methods.dismissProgressBar(progressDialog);
+                return false;
+            }
+            if (!validateName(lastname)) {
+                lastname.requestFocus();
+                Methods.dismissProgressBar(progressDialog);
+                return false;
+            }
 
-            Methods.dismissProgressBar(progressDialog);
-            return false;
+
         }
         return true;
     }
@@ -500,14 +525,31 @@ public class LoginActivity extends Activity {
     }
 
     private boolean validateConfirmPassword() {
-        String password = signpass2.getText().toString().trim();
+        String password = name.getText().toString().trim();
         if (password.isEmpty() || !password.equals(signpass.getText().toString().trim())) {
-            signpass2.requestFocus();
+            name.requestFocus();
             if (password.isEmpty())
-                signpass2.setError("champs obligatoire");
+                name.setError("champs obligatoire");
 
             if (!password.equals(signpass.getText().toString().trim()))
-                signpass2.setError("les 2 mots de passes ne sont pas les mêmes ");
+                name.setError("les 2 mots de passes ne sont pas les mêmes ");
+
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateName(EditText text) {
+        String lastnameS = text.getText().toString();
+        Pattern pattern = Pattern.compile("(\\w){2,}?");
+        Matcher matcher = pattern.matcher(lastnameS);
+        if (!matcher.matches()) {
+            text.requestFocus();
+            if (lastnameS.isEmpty()) {
+                text.setError("champs obligatoire");
+                return false;
+            }
+            text.setError("format de numéro de téléphone invalide");
 
             return false;
         }

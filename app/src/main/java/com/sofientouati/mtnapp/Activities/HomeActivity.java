@@ -78,7 +78,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
         //getting views
-
         appBarLayout = (AppBarLayout) findViewById(R.id.mainAppBar);
         toolbar = (Toolbar) findViewById(R.id.maintoolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.mainDrawerLayout);
@@ -90,10 +89,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         view = navigationView.getHeaderView(0);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
         phone = (TextView) view.findViewById(R.id.textView);
-
         sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
         phone.setText(sharedPreferences.getString(SharedStrings.SHARED_PHONE, ""));
-
 
         //listeners
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -105,12 +102,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         //actions
-
         animateTextView(2000.00f, solde, balance);
-
         setupViewPager(mainviewPager);
-
-
         tabLayout.setupWithViewPager(mainviewPager);
         setupTabIcons();
 
@@ -194,25 +187,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
                 linearLayout.setBackgroundColor((Integer) animation.getAnimatedValue());
-//                Menu menu = null
-//                getMenuInflater().inflate(R.menu.activity_home_drawer,menu);
                 MenuItem view = (MenuItem) navigationView.findViewById(R.id.home);
-
-//                navigationView.setItemIconTintList(getResources().getColorStateList(R.color.red_item_drawer));
-//                navigationView.setItemTextColor(getResources().getColorStateList(R.color.red_item_drawer));
                 int[][] states = new int[][]{
                         new int[]{android.R.attr.state_checked}, //  checked
                         new int[]{-android.R.attr.state_checked}, // unchecked
 
                 };
-
-
                 int[] colors = new int[]{
                         (int) animation.getAnimatedValue(),
                         Color.DKGRAY
                 };
-//                iconsf1.setColorFilter((int) animation.getAnimatedValue());
-//                refresh.setColorSchemeColors(Color.parseColor(blue));
                 navigationView.setItemIconTintList(new ColorStateList(states, colors));
                 navigationView.setItemTextColor(new ColorStateList(states, colors));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -222,7 +206,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         coloAnimator.setDuration(200);
-
         coloAnimator.start();
 
     }
