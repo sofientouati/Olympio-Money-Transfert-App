@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,8 +40,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     private SharedPreferences sharedPreferences;
-    private float seuil = 1000f, solde = 420.50f;
-    private View view;
+    private float seuil = 1000f, solde = 0420.55f;
+    private View view, f1, f2, f3, f4;
     private LinearLayout linearLayout;
     private ValueAnimator coloAnimator;
     private AppBarLayout appBarLayout;
@@ -62,12 +64,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             yellow = "#F9A825",
             blue = "#0072ff";
     private View home;
+    private ImageView iconsf1;
+    private SwipeRefreshLayout refresh;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        if (getResources().getBoolean(R.bool.portrait_only)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
         //getting views
 
         appBarLayout = (AppBarLayout) findViewById(R.id.mainAppBar);
@@ -81,8 +90,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         view = navigationView.getHeaderView(0);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
         phone = (TextView) view.findViewById(R.id.textView);
-        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_NAME, Context.MODE_PRIVATE);
-        phone.setText("+229" + sharedPreferences.getString(SharedStrings.SHARED_PHONE, ""));
+
+        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
+        phone.setText(sharedPreferences.getString(SharedStrings.SHARED_PHONE, ""));
 
 
         //listeners
@@ -100,8 +110,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         setupViewPager(mainviewPager);
 
-        tabLayout.setupWithViewPager(mainviewPager, true);
+
+        tabLayout.setupWithViewPager(mainviewPager);
         setupTabIcons();
+
+
     }
 
 
@@ -157,7 +170,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     //animations
     private void animateTextView(float initVal, float finalVal, final TextView textView) {
         final ValueAnimator valueAnimator = ValueAnimator.ofFloat(initVal, finalVal);
-        valueAnimator.setDuration(2000);
+        valueAnimator.setDuration(500);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -198,7 +211,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         (int) animation.getAnimatedValue(),
                         Color.DKGRAY
                 };
-
+//                iconsf1.setColorFilter((int) animation.getAnimatedValue());
+//                refresh.setColorSchemeColors(Color.parseColor(blue));
                 navigationView.setItemIconTintList(new ColorStateList(states, colors));
                 navigationView.setItemTextColor(new ColorStateList(states, colors));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -237,7 +251,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+        mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
         mainPagerAdapter.addFragment(new ActivityFragment(), "Activité");
         mainPagerAdapter.addFragment(new DeposeFragment(), "Déposer");
         mainPagerAdapter.addFragment(new SendFragment(), "Envoyer");

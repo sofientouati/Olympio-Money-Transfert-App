@@ -1,10 +1,12 @@
 package com.sofientouati.mtnapp.Adapters;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,6 @@ import android.widget.TextView;
 import com.sofientouati.mtnapp.Objects.ActivityObject;
 import com.sofientouati.mtnapp.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +27,12 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
     private Context context;
     private int color;
     private ActivityObject activityObject;
+    private ValueAnimator coloAnimator;
+    private String
+            red = "#C62828",
+            yellow = "#F9A825",
+            blue = "#0072ff";
+    private float seuil = 1000f, solde = 0420.55f;
 
 
     public ActivityRecyclerViewAdapter(List<ActivityObject> list, Context context, int color) {
@@ -36,7 +43,7 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_activity_row, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_activity_row, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
@@ -46,18 +53,24 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
         activityObject = list.get(position);
         holder.action.setText(activityObject.getAction());
         holder.date.setText(activityObject.getDate());
+
+        if (solde < seuil) {
+            holder.status.setColorFilter(Color.parseColor(red));
+            holder.amount.setTextColor(Color.parseColor(red));
+        } else
+            holder.status.setColorFilter(Color.parseColor(blue));
         switch (activityObject.getAction()) {
             case "déposé": {
 
                 holder.source.setText(activityObject.getDestinationNumber());
                 holder.amount.setText(String.valueOf(activityObject.getAmount()));
-                setStatusImage(holder.imageView, activityObject.getStatus());
+                setStatusImage(holder.status, activityObject.getStatus(), position);
                 break;
             }
             case "retiré": {
                 holder.source.setText(activityObject.getSourceNumber());
                 holder.amount.setText(String.valueOf(activityObject.getAmount()));
-                setStatusImage(holder.imageView, activityObject.getStatus());
+                setStatusImage(holder.status, activityObject.getStatus(), position);
                 break;
             }
 
@@ -70,8 +83,13 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
         return list.size();
     }
 
-    private void setStatusImage(ImageView image, String status) {
-        image.setColorFilter(color);
+
+    private void setStatusImage(ImageView image, String status, int position) {
+
+
+
+
+
         switch (status) {
             case "done":
                 image.setImageResource(R.drawable.ic_done_white_48dp);
@@ -147,7 +165,7 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
-        ImageView imageView;
+        ImageView status;
         TextView source, action, date, amount;
 
         public ViewHolder(View itemView) {
@@ -157,9 +175,43 @@ public class ActivityRecyclerViewAdapter extends RecyclerView.Adapter<ActivityRe
             date = (TextView) itemView.findViewById(R.id.date);
             amount = (TextView) itemView.findViewById(R.id.amount);
             cardView = (CardView) itemView.findViewById(R.id.activityCardView);
-            imageView = (ImageView) itemView.findViewById(R.id.img);
+            status = (ImageView) itemView.findViewById(R.id.img);
 
 
         }
     }
+
+    //animations
+    private void animateTextView(float initVal, float finalVal, final ImageView imageView) {
+        final ValueAnimator valueAnimator = ValueAnimator.ofFloat(initVal, finalVal);
+        valueAnimator.setDuration(500);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Log.e("onAnimationUpdate: ", String.valueOf(animation.getAnimatedValue()));
+                if (Float.valueOf(animation.getAnimatedValue().toString()) <= seuil)
+                    animateAppAndStatusBar(Color.parseColor(blue), Color.parseColor(red), imageView);
+            }
+
+        });
+        valueAnimator.start();
+    }
+
+    private void animateAppAndStatusBar(Integer fromColor, final Integer toColor, final ImageView image) {
+        coloAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), fromColor, toColor);
+
+        coloAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+                image.setColorFilter((Integer) animation.getAnimatedValue());
+
+            }
+        });
+        coloAnimator.setDuration(200);
+
+        coloAnimator.start();
+
+    }
+
 }

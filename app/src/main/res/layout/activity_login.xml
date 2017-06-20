@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
+    android:id="@+id/parent"
     tools:context="com.sofientouati.mtnapp.Activities.LoginActivity">
 
     <RelativeLayout
@@ -49,6 +50,7 @@
             android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Connexion" />
 
         <Button
@@ -57,6 +59,7 @@
             android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Créer un Compte" />
 
 
@@ -65,7 +68,7 @@
     <RelativeLayout
         android:id="@+id/form"
         android:layout_centerInParent="true"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="15sp"
         android:visibility="gone">
@@ -110,7 +113,7 @@
     <RelativeLayout
         android:id="@+id/signupLay"
         android:layout_centerInParent="true"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20sp"
         android:visibility="gone">

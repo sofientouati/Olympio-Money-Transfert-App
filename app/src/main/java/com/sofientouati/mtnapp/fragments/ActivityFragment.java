@@ -1,6 +1,8 @@
 package com.sofientouati.mtnapp.fragments;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +42,8 @@ public class ActivityFragment extends Fragment {
             red = "#C62828",
             yellow = "#F9A825",
             blue = "#0072ff";
+    private float seuil = 1000f, solde = 0420.55f;
+    private ValueAnimator coloAnimator;
 
     @Nullable
     @Override
@@ -48,14 +53,19 @@ public class ActivityFragment extends Fragment {
 
         recyclerView = (RecyclerView) viewGroup.findViewById(R.id.activityRecyclerView);
         refresh = (SwipeRefreshLayout) viewGroup.findViewById(R.id.refresh);
-        refresh.setColorSchemeColors(getResources().getColor(R.color.redtoolbar));
+        refresh.setColorSchemeColors(Color.parseColor(blue));
+        if (solde < seuil)
+            refresh.setColorSchemeColors(Color.parseColor(red));
         empty = (TextView) viewGroup.findViewById(R.id.empty_view);
         list = loadData();
         if (list.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             empty.setVisibility(View.VISIBLE);
         } else {
-            activityRecyclerViewAdapter = new ActivityRecyclerViewAdapter(list, getContext(), Color.parseColor(red));
+            String color = blue;
+            if (solde < seuil)
+                color = red;
+            activityRecyclerViewAdapter = new ActivityRecyclerViewAdapter(list, getContext(), Color.parseColor(color));
             activityRecyclerViewAdapter.notifyDataSetChanged();
             recyclerView.setAdapter(activityRecyclerViewAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -75,6 +85,7 @@ public class ActivityFragment extends Fragment {
                 }
             }
         });
+        animateTextView(2000f, solde);
 
 
         return viewGroup;
@@ -91,5 +102,37 @@ public class ActivityFragment extends Fragment {
         activityObject = new ActivityObject("4", "97534814", "97884888", "cancel", "88/28/88 18:88", "retiré", 500.17f);
         list.add(activityObject);
         return list;
+    }
+
+    //animations
+    private void animateTextView(float initVal, float finalVal) {
+        final ValueAnimator valueAnimator = ValueAnimator.ofFloat(initVal, finalVal);
+        valueAnimator.setDuration(2000);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Log.e("onAnimationUpdate: ", String.valueOf(animation.getAnimatedValue()));
+                if (Float.valueOf(animation.getAnimatedValue().toString()) <= seuil)
+                    animateAppAndStatusBar(Color.parseColor(blue), Color.parseColor(red));
+            }
+
+        });
+        valueAnimator.start();
+    }
+
+    private void animateAppAndStatusBar(Integer fromColor, final Integer toColor) {
+        coloAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), fromColor, toColor);
+
+        coloAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                refresh.setColorSchemeColors(Color.parseColor(red));
+
+            }
+        });
+        coloAnimator.setDuration(200);
+
+        coloAnimator.start();
+
     }
 }

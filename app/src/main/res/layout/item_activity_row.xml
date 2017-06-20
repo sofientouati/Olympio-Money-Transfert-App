@@ -4,19 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:padding="10sp"
+    android:layout_height="100sp">
 
     <android.support.v7.widget.CardView
         android:id="@+id/activityCardView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
         app:cardCornerRadius="2sp"
         app:cardElevation="1sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,7 +21,6 @@
 
 
         <android.support.constraint.ConstraintLayout
-            android:layout_margin="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -49,11 +45,13 @@
                 android:layout_gravity="center"
                 android:text="97532814"
                 android:textColor="@android:color/black"
-                android:textSize="30sp"
+                android:textSize="20sp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/guideline"
                 app:layout_constraintRight_toLeftOf="@+id/guideline3"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/guideline2" />
 
             <TextView
                 android:id="@+id/amount"
@@ -61,12 +59,12 @@
                 android:layout_height="wrap_content"
                 android:text="+20.14"
                 android:textSize="30sp"
+                android:textColor="@color/bluetoolbar"
                 app:layout_constraintBottom_toTopOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toLeftOf="@+id/guideline3"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <TextView
@@ -75,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity=""
                 android:text="deposé"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toLeftOf="@+id/guideline3"
@@ -100,7 +98,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="49dp" />
+                app:layout_constraintGuide_begin="49dp"
+                tools:layout_editor_absoluteY="91dp"
+                tools:layout_editor_absoluteX="69dp" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline2"
@@ -108,8 +108,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintGuide_begin="50dp"
-                tools:layout_editor_absoluteX="10dp"
-                tools:layout_editor_absoluteY="383dp" />
+                tools:layout_editor_absoluteX="20dp"
+                tools:layout_editor_absoluteY="141dp" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline3"
@@ -118,7 +118,8 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_end="121dp"
 
-                />
+                tools:layout_editor_absoluteY="91dp"
+                tools:layout_editor_absoluteX="189dp" />
 
 
         </android.support.constraint.ConstraintLayout>

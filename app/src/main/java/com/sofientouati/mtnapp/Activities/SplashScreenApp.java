@@ -5,11 +5,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -35,11 +38,17 @@ public class SplashScreenApp extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash_screen);
 
-        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_NAME, Context.MODE_PRIVATE);
+        if (getResources().getBoolean(R.bool.portrait_only)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+
+        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
 
         imageView = (ImageView) findViewById(R.id.logoapp);
-
         startAnimation();
+
 
     }
 
@@ -85,14 +94,21 @@ public class SplashScreenApp extends Activity {
 
             }
         });
-
-
-        imageView.startAnimation(animation2);
         checkPermissions();
+        imageView.startAnimation(animation2);
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
+//                checkPermissions();
                 Intent intent;
                 boolean logged = sharedPreferences.getBoolean(SharedStrings.SHARED_ISLOGGED, false);
                 Log.i("run: logged", String.valueOf(logged));
@@ -115,28 +131,22 @@ public class SplashScreenApp extends Activity {
             }
         }, 2000);
 
+
     }
 
-    //loading permissions
-    private ArrayList<String> addingPermissionList() {
-        ArrayList<String> x = new ArrayList<String>();
-
-        x.add(Manifest.permission.READ_PHONE_STATE);
-
-        return x;
-    }
 
     private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            permissions = addingPermissionList();
-            Log.i("checkPermissions: ", permissions.toString());
-            for (String permission : permissions) {
-                Log.i("checkPermission: ", permission);
-                if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(this, new String[]{permission}, 1);
+            ArrayList<String> x = new ArrayList<String>();
+            x.add(Manifest.permission.READ_PHONE_STATE);
+            x.add(Manifest.permission.READ_CONTACTS);
+            String[] permissions = new String[10];
+            for (int i = 0; i < x.size(); i++) {
+                if (ContextCompat.checkSelfPermission(this, x.get(i)) != PackageManager.PERMISSION_GRANTED) {
+                    permissions[i] = x.get(i);
                 }
             }
+            ActivityCompat.requestPermissions(this, new String[]{x.get(0), x.get(1)}, 1);
 
 
         }

@@ -8,9 +8,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
@@ -39,7 +42,7 @@ import java.util.regex.Pattern;
 
 public class LoginActivity extends Activity {
     private ImageView imageView;
-    private RelativeLayout mainlay, login, signup;
+    private RelativeLayout parent, mainlay, login, signup;
     private LinearLayout btns;
     private Button signupbtn, loginbtn;
     private TextView bienvenu;
@@ -55,9 +58,18 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        if (getResources().getBoolean(R.bool.portrait_only)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
         /*getting views*/
         //layouts
+
+
         imageView = (ImageView) findViewById(R.id.logoapp);
+        parent = (RelativeLayout) findViewById(R.id.parent);
         mainlay = (RelativeLayout) findViewById(R.id.mainlay);
         login = (RelativeLayout) findViewById(R.id.form);
         signup = (RelativeLayout) findViewById(R.id.signupLay);
@@ -75,7 +87,7 @@ public class LoginActivity extends Activity {
         signpass2 = (EditText) findViewById(R.id.conPassTxt);
 
         //get Shared
-        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         /*listeners*/
@@ -98,8 +110,10 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 if (status == null) {
                     getPermissions(phonelog);
-                    startXTranslation(bienvenu, 300, 1500, true, 0);
-                    startXTranslation(login, -1000, 50, false, 500);
+                    int bienvenuPo = (parent.getWidth() - bienvenu.getWidth()) / 2;
+                    int loginPo = (parent.getWidth() - login.getWidth()) / 2;
+                    startXTranslation(bienvenu, bienvenuPo, parent.getWidth(), true, 0);
+                    startXTranslation(login, -parent.getWidth(), 25, false, 500);
                     signupbtn.setText("Annuler");
                     status = "login";
                     return;
@@ -111,9 +125,12 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (status == null) {
+
                     getPermissions(phonesign);
-                    startXTranslation(bienvenu, 300, 1500, true, 0);
-                    startXTranslation(signup, -1000, 50, false, 500);
+                    int bienvenuPo = (mainlay.getWidth() - bienvenu.getWidth()) / 2;
+                    int loginPo = (parent.getWidth() - signup.getWidth()) / 2;
+                    startXTranslation(bienvenu, bienvenuPo, parent.getWidth(), true, 0);
+                    startXTranslation(signup, -parent.getWidth(), 25, false, 500);
                     signupbtn.setText("Annuler");
                     loginbtn.setText("creer un compte");
                     status = "signup";
@@ -123,10 +140,21 @@ public class LoginActivity extends Activity {
             }
         });
 
-
         if ((getIntent().getStringExtra("class") != null) && (getIntent().getStringExtra("class").equals("SplashScreen"))) {
 
-            startYTranslation(imageView);
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("run: ", String.valueOf(parent.getHeight()));
+                    Log.i("run: ", String.valueOf(imageView.getHeight()));
+                    int height = (parent.getHeight() - imageView.getHeight()) / 2;
+                    startYTranslation(imageView, height);
+                }
+            };
+            new Handler(Looper.getMainLooper()).post(r);
+
+
+
         } else {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
@@ -138,14 +166,17 @@ public class LoginActivity extends Activity {
         }
 
 
+
     }
+
 
     //actions
     private void cancelAction() {
         if (status.equals("login")) {
             status = null;
-            startXTranslation(login, 50, -1500, true, 0);
-            startXTranslation(bienvenu, 1500, 300, false, 0);
+            int bienvenuPo = (mainlay.getWidth() - bienvenu.getWidth()) / 2;
+            startXTranslation(login, 25, -parent.getWidth(), true, 0);
+            startXTranslation(bienvenu, parent.getWidth(), bienvenuPo, false, 0);
             signupbtn.setText("créer un compte");
             loginbtn.setText("Connexion");
             logpass.setText("");
@@ -158,8 +189,10 @@ public class LoginActivity extends Activity {
         }
         if (status.equals("signup")) {
             status = null;
-            startXTranslation(signup, 50, -1500, true, 0);
-            startXTranslation(bienvenu, 1500, 300, false, 0);
+            int bienvenuPo = (mainlay.getWidth() - bienvenu.getWidth()) / 2;
+
+            startXTranslation(signup, 25, -parent.getWidth(), true, 0);
+            startXTranslation(bienvenu, parent.getWidth(), bienvenuPo, false, 0);
             signupbtn.setText("créer un compte");
             loginbtn.setText("connexion");
             signpass2.setText("");
@@ -275,8 +308,9 @@ public class LoginActivity extends Activity {
     public void onBackPressed() {
         if (status != null && status.equals("login")) {
             status = null;
-            startXTranslation(login, 50, -1500, true, 0);
-            startXTranslation(bienvenu, 1500, 300, false, 0);
+            int bienvenuPo = (mainlay.getWidth() - bienvenu.getWidth()) / 2;
+            startXTranslation(login, 25, -1500, true, 0);
+            startXTranslation(bienvenu, 1500, bienvenuPo, false, 0);
             signupbtn.setText("créer un compte");
             loginbtn.setText("Connexion");
             logpass.setText("");
@@ -289,8 +323,9 @@ public class LoginActivity extends Activity {
         }
         if (status != null && status.equals("signup")) {
             status = null;
-            startXTranslation(signup, 50, -1500, true, 0);
-            startXTranslation(bienvenu, 1500, 300, false, 0);
+            int bienvenuPo = (mainlay.getWidth() - bienvenu.getWidth()) / 2;
+            startXTranslation(signup, 25, -1500, true, 0);
+            startXTranslation(bienvenu, 1500, bienvenuPo, false, 0);
             signupbtn.setText("créer un compte");
             loginbtn.setText("connexion");
             signpass2.setText("");
@@ -336,8 +371,8 @@ public class LoginActivity extends Activity {
         v.startAnimation(animation1);
     }
 
-    private void startYTranslation(View v) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(v, "y", 500, 0)
+    private void startYTranslation(View v, int height) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(v, "y", height, 0)
                 .setDuration(1000);
         animator.setStartDelay(200);
 //        animator.setInterpolator();
@@ -372,8 +407,8 @@ public class LoginActivity extends Activity {
 
     private void startXTranslation(final View v, int x, int y, final boolean first, int delay) {
         ObjectAnimator animator = ObjectAnimator.ofFloat(v, "x", x, y)
-                .setDuration(1000);
-        animator.setStartDelay(delay);
+                .setDuration(400);
+//        animator.setStartDelay(delay);
         animator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
