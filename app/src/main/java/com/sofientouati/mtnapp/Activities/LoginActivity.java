@@ -227,7 +227,7 @@ public class LoginActivity extends Activity {
                 editor.putString(SharedStrings.SHARED_PHONE, phonelog.getText().toString());
                 editor.commit();
                 Methods.dismissProgressBar(progressDialog);
-                startActivity(new Intent(LoginActivity.this, CheckPatternActivity.class));
+                startActivity(new Intent(LoginActivity.this, GetPicActivity.class));
                 return;
             }
         }

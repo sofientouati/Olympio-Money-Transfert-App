@@ -140,13 +140,16 @@ public class SplashScreenApp extends Activity {
             ArrayList<String> x = new ArrayList<String>();
             x.add(Manifest.permission.READ_PHONE_STATE);
             x.add(Manifest.permission.READ_CONTACTS);
+            x.add(Manifest.permission.CAMERA);
+            x.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            x.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
             String[] permissions = new String[10];
             for (int i = 0; i < x.size(); i++) {
                 if (ContextCompat.checkSelfPermission(this, x.get(i)) != PackageManager.PERMISSION_GRANTED) {
                     permissions[i] = x.get(i);
                 }
             }
-            ActivityCompat.requestPermissions(this, new String[]{x.get(0), x.get(1)}, 1);
+            ActivityCompat.requestPermissions(this, new String[]{x.get(0), x.get(1), x.get(2), x.get(3)}, 1);
 
 
         } else {

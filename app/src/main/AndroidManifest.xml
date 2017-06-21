@@ -4,7 +4,9 @@
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +26,8 @@
         <activity android:name=".Activities.CheckPatternActivity" />
         <activity
             android:name=".Activities.HomeActivity"
-            android:theme="@style/MyMaterialThemeNoActionBar"></activity>
+            android:theme="@style/MyMaterialThemeNoActionBar" />
+        <activity android:name=".Activities.GetPicActivity"></activity>
     </application>
 
 </manifest>
