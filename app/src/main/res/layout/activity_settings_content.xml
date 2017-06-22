@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5sp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/divider"
+            android:orientation="vertical"
+            android:showDividers="middle|end">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20sp">
+
+                <TextView
+                    android:id="@+id/txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="modifier coordonnées"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                    android:id="@+id/coordrels"
+                    android:layout_below="@+id/txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/nom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="nom"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPersonName"
+                        android:nextFocusDown="@+id/prenom"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/prenom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nom"
+                        android:hint="prénom"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPersonName"
+                        android:nextFocusDown="@id/email"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/prenom"
+                        android:hint="email"
+                        android:imeOptions="actionDone"
+                        android:inputType="textEmailAddress"
+                        android:singleLine="true" />
+
+                    <Button
+                        android:id="@+id/coordbtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/email"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/bluetoolbar"
+                        android:text="sauvegarder"
+                        android:textColor="#fff" />
+
+
+                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+                <!--<RelativeLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:lawyout_height="wrap_content"-->
+                <!--android:layout_below="@+id/txt"-->
+                <!--android:visibility="gone">-->
+
+
+                <!--</RelativeLayout>-->
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/seuil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20sp">
+
+                <TextView
+                    android:id="@+id/text2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="modifier la seuil"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                    android:id="@+id/seurels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text2">
+
+                    <EditText
+                        android:id="@+id/suile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="seuil"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal"
+                        android:nextFocusDown="@id/prenom"
+                        android:singleLine="true" />
+
+                    <Button
+                        android:id="@+id/suilebtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/suile"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/bluetoolbar"
+                        android:text="changer"
+                        android:textColor="#fff" />
+
+                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20sp">
+
+                <TextView
+                    android:id="@+id/text3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="modifier mot de passe"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                    android:id="@+id/passrels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text3">
+
+                    <EditText
+                        android:id="@+id/opass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="mot de passse"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPassword"
+                        android:nextFocusDown="@id/prenom"
+                        android:nextFocusForward="@+id/npass"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/npass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/opass"
+                        android:hint="nouveau mot de passe"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPassword"
+                        android:nextFocusDown="@id/prenom"
+                        android:nextFocusForward="@+id/cnpass"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/cnpass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/npass"
+                        android:hint="répeter mot de passe"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword"
+                        android:nextFocusDown="@id/prenom"
+                        android:singleLine="true" />
+
+                    <Button
+                        android:id="@+id/passbtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/cnpass"
+                        android:layout_marginTop="10sp"
+                        android:background="@color/bluetoolbar"
+                        android:text="changer"
+                        android:textColor="#fff" />
+
+                </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>

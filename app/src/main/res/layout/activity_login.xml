@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
     android:id="@+id/parent"
-    tools:context="com.sofientouati.mtnapp.Activities.LoginActivity">
+    tools:context="com.sofientouati.olympio.Activities.LoginActivity">
 
     <RelativeLayout
         android:id="@+id/mainlay"

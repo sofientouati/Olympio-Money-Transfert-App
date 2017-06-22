@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
-    tools:context="com.sofientouati.mtnapp.Activities.CheckPatternActivity">
+    tools:context="com.sofientouati.olympio.Activities.CheckPatternActivity">
 
     <TextView
         android:id="@+id/text"

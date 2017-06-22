@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
-    tools:context="com.sofientouati.mtnapp.Activities.GetPicActivity">
+    tools:context="com.sofientouati.olympio.Activities.GetPicActivity">
 
 
     <RelativeLayout
@@ -23,7 +23,7 @@
             android:layout_margin="30sp"
             android:scaleX="2"
             android:scaleY="2"
-            android:src="@drawable/ic_camera_enhance_white_48dp" />
+            app:srcCompat="@drawable/ic_camera_enhance_white_48dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#FFF"
-            android:src="@drawable/ic_close_white_48dp"
+            app:srcCompat="@drawable/ic_close_white_48dp"
             android:tint="@color/bluetoolbar" />
 
         <ImageButton

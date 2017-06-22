@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bluetoolbar"
+        android:elevation="20sp"
         android:visibility="invisible">
 
 
@@ -24,6 +25,7 @@
             android:id="@+id/mainAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="20sp"
             android:background="@color/colorPrimaryDark"
             app:tabGravity="fill"
             app:tabMode="fixed">
@@ -45,20 +47,18 @@
                         android:layout_alignParentTop="true"
                         android:alpha="0.9"
                         android:background="@android:color/transparent"
-                        android:src="@drawable/ic_menu_white_36dp"
-                        android:contentDescription="alt" />
+                        android:src="@drawable/ic_menu_white_36dp" />
 
                     <ImageButton
                         android:id="@+id/profile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginStart="10sp"
+                        android:layout_marginRight="10sp"
                         android:alpha="0.9"
                         android:background="@android:color/transparent"
-
-                        android:src="@drawable/ic_account_circle_white_36dp"
-                        android:contentDescription="alt" />
+                        android:elevation="21sp"
+                        android:src="@drawable/ic_account_circle_white_36dp" />
 
 
                     <TextView
@@ -92,8 +92,7 @@
                 android:layout_height="@dimen/custom_tab_layout_height"
                 android:layout_below="@id/maintoolbar"
                 app:tabGravity="fill"
-                app:tabIndicatorColor="#fff"
-                app:tabMode="fixed" />
+                app:tabIndicatorColor="#fff" />
         </android.support.design.widget.AppBarLayout>
 
 
