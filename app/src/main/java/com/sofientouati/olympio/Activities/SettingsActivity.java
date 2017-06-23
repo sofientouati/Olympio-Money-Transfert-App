@@ -1,8 +1,6 @@
 package com.sofientouati.olympio.Activities;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +8,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
@@ -17,8 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
@@ -52,7 +48,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     private ExpandableRelativeLayout coord, seuil, pass;
     private TextView coordTxt, seuilT, passTxt;
     private int red = Color.parseColor("#C62828");
-    private ProgressDialog progressDialog;
+    private AlertDialog progressDialog;
 
 
     @Override
@@ -104,6 +100,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         coordTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearText();
                 if (seuil.isExpanded() || pass.isExpanded()) {
                     seuil.collapse();
                     pass.collapse();
@@ -116,6 +113,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         seuilT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearText();
                 if (coord.isExpanded() || pass.isExpanded()) {
                     coord.collapse();
                     pass.collapse();
@@ -126,6 +124,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         passTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearText();
                 pass.toggle();
                 if (coord.isExpanded() || seuil.isExpanded()) {
                     coord.collapse();
@@ -146,6 +145,25 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             public void onClick(View v) {
                 progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarde");
                 if (!submitCoordForm()) {
+                    Methods.dismissProgressBar(progressDialog);
+                }
+
+            }
+        });
+        seuilbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarde");
+                if (!submitSeuilForm()) {
+                    Methods.dismissProgressBar(progressDialog);
+                }
+            }
+        });
+        passbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarde");
+                if (!submitPassForm()) {
                     Methods.dismissProgressBar(progressDialog);
                 }
 
@@ -263,10 +281,19 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         }
     }
 
+    private void clearText() {
+        nameTxt.setText("");
+        lnameTxt.setText("");
+        mailTxt.setText("");
+        seuilTxt.setText("");
+        opassTxt.setText("");
+        npassTxt.setText("");
+        cnpassTxt.setText("");
+    }
 
     //validating
     private boolean submitCoordForm() {
-        if (!validateEmail(mailTxt) || !validateName(lnameTxt) || !validateName(nameTxt)) {
+        if (!validateEmail(mailTxt) || !validateName(lnameTxt) || !validateName(nameTxt) || !validateEmptyCoord()) {
 
             /*if (!validatePassword(opassTxt)) {
                 opassTxt.requestFocus();
@@ -277,12 +304,13 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 npassTxt.requestFocus();
                 Methods.dismissProgressBar(progressDialog);
                 return false;
-            }
-            if (!validateName(cnpassTxt)) {
-                cnpassTxt.requestFocus();
-                Methods.dismissProgressBar(progressDialog);
-                return false;
             }*/
+            if (!validateEmptyCoord()) {
+
+                Methods.dismissProgressBar(progressDialog);
+                Methods.showSnackBar(coord, "entrer au minimum un champ pour modifier");
+                return false;
+            }
             if (!validateName(nameTxt)) {
                 nameTxt.requestFocus();
                 Methods.dismissProgressBar(progressDialog);
@@ -304,6 +332,69 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 
+    private boolean submitSeuilForm() {
+
+
+        if (!isValidAmount()) {
+
+            seuilTxt.requestFocus();
+            return false;
+        }
+
+
+        return true;
+    }
+
+    private boolean submitPassForm() {
+
+        if (!validatePassword(npassTxt) ||
+                !validatePassword(opassTxt)
+                ) {
+            if (!validatePassword(opassTxt)) {
+                opassTxt.requestFocus();
+                return false;
+            }
+            if (!validatePassword(npassTxt)) {
+                npassTxt.requestFocus();
+                return false;
+            }
+
+        }
+        if (!validateIdPassword(cnpassTxt, npassTxt, true)) {
+            Log.i("submitPassForm: ", "not valid id pass");
+            cnpassTxt.requestFocus();
+            return false;
+        }
+        if (!validateIdPassword(npassTxt, opassTxt, false)) {
+            Log.i("submitPassForm: ", "not valid id pass ideb");
+            npassTxt.requestFocus();
+            return false;
+        }
+
+
+        Log.i("submitPassForm: ", "succeess");
+
+        return true;
+    }
+
+
+    private boolean validateEmptyCoord() {
+        if (mailTxt.getText().toString().isEmpty() && nameTxt.getText().toString().isEmpty() && lnameTxt.getText().toString().isEmpty()) {
+
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidAmount() {
+        String numberT = seuilTxt.getText().toString().trim();
+
+        if (numberT.isEmpty() || numberT.equals("0")) {
+            seuilTxt.setError("entrer un montant");
+            return false;
+        }
+        return true;
+    }
 
     private boolean validatePassword(EditText pass) {
         String password = pass.getText().toString().trim();
@@ -312,53 +403,52 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
 
         if (!match.matches()) {
-            pass.requestFocus();
-//            if (password.isEmpty()) {
-//                pass.setError("champs obligatoire");
-//
-//                return false;
-//            }
-            pass.setError("mot de passe doit au moins six character contenant une lettre majuscule,miniscule et un chiffre");
+            if (password.isEmpty()) {
+                pass.setError("champs obligatoire");
+            } else
+                pass.setError("mot de passe doit au moins six character contenant une lettre majuscule,miniscule et un chiffre");
+
             return false;
         }
 
 
         return true;
 
+    }
+
+    private boolean validateIdPassword(EditText editText, EditText editText2, boolean ch) {
+        String password = editText.getText().toString().trim();
+        String password2 = editText2.getText().toString().trim();
+
+        if (password.isEmpty() || !password.equals(password2)) {
+
+
+            if (!password.equals(password2) && ch) {
+
+                editText.setError("les deux mots de passes ne sont pas les mêmes ");
+                return false;
+            }
+
+
+        }
+        if (password.equals(password2) && !ch) {
+            Log.i("validateIdPassword: ", String.valueOf(password.equals(password2)));
+            editText.setError("cette mot de passe déja utilisé entrer un nouveau");
+            return false;
+        }
+        return true;
     }
 
     private boolean validateEmail(EditText email) {
         String emails = email.getText().toString().trim();
 
-        if (!TextUtils.isEmpty(emails) && android.util.Patterns.EMAIL_ADDRESS.matcher(emails).matches()) {
+        if (!TextUtils.isEmpty(emails) && !android.util.Patterns.EMAIL_ADDRESS.matcher(emails).matches()) {
             email.requestFocus();
-//            if (emails.isEmpty()) {
-//                email.setError("champs obligatoire");
-//
-//                return false;
-//            }
-            email.setError("mot de passe doit au moins six character contenant une lettre majuscule,miniscule et un chiffre");
-            return false;
-        }
-
-
-        return true;
-
-    }
-
-    private boolean validateConfirmPassword(EditText editText) {
-        String password = editText.getText().toString().trim();
-        if (password.isEmpty() || !password.equals(editText.getText().toString().trim())) {
-            editText.requestFocus();
-//            if (password.isEmpty())
-//                editText.setError("champs obligatoire");
-
-            if (!password.equals(editText.getText().toString().trim()))
-                editText.setError("les 2 mots de passes ne sont pas les mêmes ");
-
+            email.setError("format d'email invalide");
             return false;
         }
         return true;
+
     }
 
     private boolean validateName(EditText text) {

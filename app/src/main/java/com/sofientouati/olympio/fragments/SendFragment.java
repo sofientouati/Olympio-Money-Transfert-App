@@ -2,7 +2,7 @@ package com.sofientouati.olympio.fragments;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -36,17 +36,17 @@ import java.util.regex.Pattern;
 
 public class SendFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 15;
+    private static final int PICK_CONTACT = 1;
     private ViewGroup viewGroup;
     private EditText number, amount;
     private TextView max;
-    private static final int PICK_CONTACT = 1;
     private Button button;
     private String
             red = "#C62828",
             yellow = "#F9A825",
             blue = "#0072ff";
 
-    private ProgressDialog progress;
+    private AlertDialog progress;
 
     @Nullable
     @Override

@@ -44,5 +44,10 @@
         <item name="color">@android:color/white</item>
     </style>
 
+    <style name="ProgressBar" parent="Theme.AppCompat.Light.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogSpotColor">@color/redtoolbar</item>
+    </style>
+
 
 </resources>

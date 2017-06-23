@@ -1,6 +1,6 @@
 package com.sofientouati.olympio.fragments;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -40,7 +40,7 @@ public class RetireFragment extends Fragment {
             blue = "#0072ff";
 
     private ArrayList<String> list;
-    private ProgressDialog progress;
+    private AlertDialog progress;
 
 
 

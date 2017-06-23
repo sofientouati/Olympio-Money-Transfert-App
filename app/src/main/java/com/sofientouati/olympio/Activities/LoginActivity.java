@@ -3,8 +3,7 @@ package com.sofientouati.olympio.Activities;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText logpass, signpass, name, lastname;
     private ArrayList<String> numbers = new ArrayList<>();
     private String status;
-    private ProgressDialog progressDialog;
+    private AlertDialog progressDialog;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 

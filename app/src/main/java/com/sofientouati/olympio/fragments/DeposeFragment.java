@@ -1,6 +1,6 @@
 package com.sofientouati.olympio.fragments;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -43,7 +43,7 @@ public class DeposeFragment extends Fragment {
             blue = "#0072ff";
 
     private Button button;
-    private ProgressDialog progress;
+    private AlertDialog progress;
 
 
     @Nullable

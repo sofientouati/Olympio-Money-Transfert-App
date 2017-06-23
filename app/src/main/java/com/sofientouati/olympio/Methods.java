@@ -1,9 +1,8 @@
 package com.sofientouati.olympio;
 
-import android.app.ProgressDialog;
+
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
@@ -12,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.lang.reflect.Field;
+
+import dmax.dialog.SpotsDialog;
 
 /**
  * Created by sofirntouati on 16/06/17.
@@ -72,20 +73,20 @@ public class Methods {
     }
 
     //progress bar
-    public static ProgressDialog showProgressBar(Context context, String message) {
+    public static AlertDialog showProgressBar(Context context, String message) {
+        AlertDialog progressDialog = new SpotsDialog(context);
+        if (checkSolde())
+            progressDialog = new SpotsDialog(context, R.style.ProgressBar);
 
-        ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMessage(message);
         progressDialog.setCancelable(true);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
+        progressDialog.setMessage(message);
         return progressDialog;
 
 
     }
 
-    public static void dismissProgressBar(ProgressDialog progressDialog) {
+    public static void dismissProgressBar(AlertDialog progressDialog) {
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
     }
