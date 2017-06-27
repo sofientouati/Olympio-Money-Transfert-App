@@ -1,7 +1,6 @@
 package com.sofientouati.olympio.Activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,8 +27,8 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.SharedStrings;
+import com.sofientouati.olympio.Objects.UserObject;
 import com.sofientouati.olympio.R;
-//import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,24 +36,28 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import io.realm.Realm;
 import pl.aprilapps.easyphotopicker.EasyImage;
+
+//import com.squareup.picasso.Picasso;
 
 public class GetPicActivity extends AppCompatActivity {
 
+    public static final String KEY_USER_ID = "userid";
+    public static final String KEY_PHOTO = "photoprofile";
     private static final String TAG = "sdfs";
+    ImageButton cancel, done;
+    EasyImage.ImageSource imageSource;
+    private Realm realm;
     private RelativeLayout emptyView;
     private ImageView loaded;
     private LinearLayout btnBar;
-    ImageButton cancel, done;
     private CharSequence[] items = {"Camera", "Gallery"};
     private Uri fileUri; // file url to store image/video
-    EasyImage.ImageSource imageSource;
     private Bitmap profilePic;
     private String imageb64;
     private File imageFile = null;
-    public static final String KEY_USER_ID = "userid";
-    public static final String KEY_PHOTO = "photoprofile";
-
+    private AlertDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class GetPicActivity extends AppCompatActivity {
         btnBar = (LinearLayout) findViewById(R.id.buttonBar);
         cancel = (ImageButton) findViewById(R.id.cancel_action);
         done = (ImageButton) findViewById(R.id.confirm);
+        realm = Realm.getDefaultInstance();
 
         //listeners
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +89,7 @@ public class GetPicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //String filePath = imageFile.getPath();
+                progress = Methods.showProgressBar(GetPicActivity.this, "chargement");
                 FileInputStream stream = null;
                 try {
                     stream = new FileInputStream(imageFile);
@@ -93,12 +98,10 @@ public class GetPicActivity extends AppCompatActivity {
                 }
                 profilePic = BitmapFactory.decodeStream(stream);
                 imageb64 = encodePicture(profilePic);
+                saveImage(imageb64);
                 Log.d("IMAGE B64:", imageb64);
-                addProfilePicture(imageb64);
-                Intent intent = new Intent(GetPicActivity.this, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                ActivityCompat.startActivity(GetPicActivity.this, intent, null);
-                finish();
+//                addProfilePicture(imageb64);
+
             }
         });
 
@@ -288,6 +291,41 @@ public class GetPicActivity extends AppCompatActivity {
         fileUri = savedInstanceState.getParcelable("file_uri");
     }
 
+    private void saveImage(final String imageb64) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, MODE_PRIVATE);
+        final String phone = sharedPreferences.getString(SharedStrings.SHARED_PHONE, "");
+
+//        if (!phone.isEmpty()) {
+//            userObject.setPhone(phone);
+//        }
+//        userObject.setPhoto(imageb64);
+        Log.i(TAG, "saveImage: phone " + phone);
+        Log.i(TAG, "saveImage: image " + imageb64);
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                UserObject userObject = realm.where(UserObject.class).equalTo("phone", phone).findFirst();
+                Log.i(TAG, "saveImage:execute: " + userObject.toString());
+                if (userObject != null)
+                    userObject.setPhoto(imageb64);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Methods.dismissProgressBar(progress);
+                Intent intent = new Intent(GetPicActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                ActivityCompat.startActivity(GetPicActivity.this, intent, null);
+                finish();
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                error.printStackTrace();
+                Methods.showSnackBar(btnBar, "erreur de serveur");
+            }
+        });
+    }
 
     public String encodePicture(Bitmap bm) {
         //Bitmap bm = BitmapFactory.decodeFile("/path/to/image.jpg");

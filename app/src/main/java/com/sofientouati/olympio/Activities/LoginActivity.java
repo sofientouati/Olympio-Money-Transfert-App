@@ -20,6 +20,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
@@ -34,11 +35,16 @@ import android.widget.TextView;
 import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.SharedStrings;
 import com.sofientouati.olympio.Objects.TelephonyInfo;
+import com.sofientouati.olympio.Objects.UserObject;
 import com.sofientouati.olympio.R;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.realm.Realm;
 
 public class LoginActivity extends AppCompatActivity {
     private ImageView imageView;
@@ -53,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     private AlertDialog progressDialog;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
         signpass = (EditText) findViewById(R.id.passTxt);
         name = (EditText) findViewById(R.id.name);
         lastname = (EditText) findViewById(R.id.lastname);
+        //others
+        realm = Realm.getDefaultInstance();
 
 
         //get Shared
@@ -96,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         logpass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                LoginActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 performAction();
                 return true;
             }
@@ -103,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         lastname.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                LoginActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 performAction();
                 return true;
             }
@@ -210,12 +221,29 @@ public class LoginActivity extends AppCompatActivity {
         if (status.equals("login")) {
             progressDialog = Methods.showProgressBar(LoginActivity.this, "Chargement");
             if (submitLoginForm()) {
-                editor.putBoolean(SharedStrings.SHARED_ISLOGGED, true);
-                editor.putString(SharedStrings.SHARED_PHONE, phonelog.getText().toString());
-                editor.commit();
-                Methods.dismissProgressBar(progressDialog);
-                ActivityCompat.startActivity(LoginActivity.this, new Intent(LoginActivity.this, HomeActivity.class), null);
-                finish();
+
+
+                UserObject query = realm.where(UserObject.class)
+                        .equalTo("phone", phonelog.getText().toString())
+                        .findFirst();
+                Log.i("performAction: query", String.valueOf(query));
+                if (query == null) {
+                    phonelog.setError("aucun compte avec ce télephone");
+                    phonelog.requestFocus();
+                    Methods.dismissProgressBar(progressDialog);
+                } else {
+                    if (query.getPassword().equals(logpass.getText().toString())) {
+                        setSharedPreferences(query);
+                        Methods.dismissProgressBar(progressDialog);
+                        ActivityCompat.startActivity(LoginActivity.this, new Intent(LoginActivity.this, HomeActivity.class), null);
+                        finish();
+                    } else {
+                        Methods.dismissProgressBar(progressDialog);
+                        logpass.setError("mot de passe incorrect");
+                        logpass.requestFocus();
+                    }
+                }
+
             } else
                 Methods.dismissProgressBar(progressDialog);
             return;
@@ -223,15 +251,59 @@ public class LoginActivity extends AppCompatActivity {
         if (status.equals("signup")) {
             progressDialog = Methods.showProgressBar(LoginActivity.this, "Création de compte");
             if (submitSingupForm()) {
-                editor.putBoolean(SharedStrings.SHARED_ISLOGGED, true);
-                editor.putString(SharedStrings.SHARED_PHONE, phonelog.getText().toString());
-                editor.commit();
-                Methods.dismissProgressBar(progressDialog);
-                ActivityCompat.startActivity(LoginActivity.this, new Intent(LoginActivity.this, GetPicActivity.class), null);
+                signup();
                 return;
             }
         }
     }
+
+    //databases requests
+
+    private void signup() {
+
+        final UserObject user = new UserObject();
+        user.setPhone(phonesign.getText().toString());
+        user.setPassword(signpass.getText().toString());
+        user.setName(name.getText().toString());
+        user.setLastname(lastname.getText().toString());
+        final Random random = new Random();
+        user.setSolde(random.nextFloat() * 2000f);
+        user.setSeuil(1000f);
+
+
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                UserObject user = realm.createObject(UserObject.class, UUID.randomUUID().toString());
+                user.setPhone(phonesign.getText().toString());
+                user.setPassword(signpass.getText().toString());
+                user.setName(name.getText().toString());
+                user.setLastname(lastname.getText().toString());
+                user.setSolde(random.nextFloat() * 2000f);
+                user.setSeuil(1000.0f);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+
+                setSharedPreferences(user);
+                Methods.dismissProgressBar(progressDialog);
+                ActivityCompat.startActivity(LoginActivity.this, new Intent(LoginActivity.this, GetPicActivity.class), null);
+                finish();
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Methods.dismissProgressBar(progressDialog);
+                error.printStackTrace();
+                if (error.getMessage().contains("Primary key value already exists:")) {
+                    phonesign.setError("compte déja existant avec cette numero");
+                    phonesign.requestFocus();
+                } else Methods.showSnackBar(parent, "erreur de serveur");
+            }
+        });
+    }
+
 
     //getting phone number
     private ArrayList<String> getPermissions(AutoCompleteTextView phone) {
@@ -444,7 +516,7 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
 
-            if (validatePassword(logpass)) {
+            if (!validatePassword(logpass)) {
                 logpass.requestFocus();
                 Methods.dismissProgressBar(progressDialog);
                 return false;
@@ -485,7 +557,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validatePhone(AutoCompleteTextView phone) {
         String phoneNum = phone.getText().toString().trim();
-        Pattern pattern = Pattern.compile("(97.*\\d{6,}$)");
+        Pattern pattern = Pattern.compile("97(\\d{6})");
         Matcher matcher = pattern.matcher(phoneNum);
 //        if (!android.util.Patterns.PHONE.matcher(phoneNum).matches()) {
         if (!matcher.matches()) {
@@ -554,6 +626,29 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private void setSharedPreferences(UserObject query) {
+        Log.i("setSharedPreferences: ", String.valueOf(query));
+        editor.putString(SharedStrings.SHARED_ID, query.getId());
+        editor.putBoolean(SharedStrings.SHARED_ISLOGGED, true);
+        Methods.setLogged(true);
+        editor.putString(SharedStrings.SHARED_PHONE, query.getPhone());
+        Methods.setPhone(query.getPhone());
+        editor.putString(SharedStrings.SHARED_NAME, query.getName());
+        Methods.setName(query.getName());
+        editor.putString(SharedStrings.SHARED_LASTNAME, query.getLastname());
+        Methods.setLastname(query.getLastname());
+        editor.putFloat(SharedStrings.SHARED_SEUIL, query.getSeuil());
+        Methods.setSeuil(query.getSeuil());
+        editor.putFloat(SharedStrings.SHARED_SOLDE, query.getSolde());
+        Methods.setSolde(query.getSolde());
+        if (!(query.getEmail() == null)) {
+            if (!query.getEmail().isEmpty())
+                editor.putString(SharedStrings.SHARED_MAIL, query.getEmail());
+            Methods.setMail(query.getEmail());
+        }
+        editor.commit();
     }
 }
 

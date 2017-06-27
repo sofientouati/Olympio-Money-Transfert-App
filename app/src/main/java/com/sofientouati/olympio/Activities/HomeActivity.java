@@ -3,7 +3,6 @@ package com.sofientouati.olympio.Activities;
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -11,7 +10,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
@@ -20,17 +18,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,9 +38,6 @@ import com.sofientouati.olympio.fragments.DeposeFragment;
 import com.sofientouati.olympio.fragments.RetireFragment;
 import com.sofientouati.olympio.fragments.SendFragment;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -57,6 +48,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private TabLayout tabLayout;
+    private ViewPager mainviewPager;
     private int[] tabicons = {
             R.drawable.ic_dashboard_white_36dp,
             R.drawable.ic_file_upload_white_36dp,
@@ -87,15 +79,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.home_nav_view);
         ImageButton imageView = (ImageButton) findViewById(R.id.togglebtn);
         ImageButton profile = (ImageButton) findViewById(R.id.profile);
-        ViewPager mainviewPager = (ViewPager) findViewById(R.id.mainViewPager);
+        mainviewPager = (ViewPager) findViewById(R.id.mainViewPager);
         tabLayout = (TabLayout) findViewById(R.id.mainTabLay);
         TextView balance = (TextView) findViewById(R.id.balanceTxt);
         View view = navigationView.getHeaderView(0);
         navigationView.setCheckedItem(R.id.home);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
-        TextView phone = (TextView) view.findViewById(R.id.textView);
-        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
-        phone.setText(sharedPreferences.getString(SharedStrings.SHARED_PHONE, ""));
+        TextView phone = (TextView) view.findViewById(R.id.phone);
+        TextView name = (TextView) view.findViewById(R.id.name);
+        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, MODE_PRIVATE);
+
+        Methods.getShared(sharedPreferences);
+        name.setText(Methods.getName() + " " + Methods.getLastname());
+        phone.setText(Methods.getPhone());
 
         //listeners
 
@@ -120,7 +116,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         //actions
         animateTextView(2000.00f, Methods.getSolde(), balance);
         setupViewPager(mainviewPager);
-        tabLayout.setupWithViewPager(mainviewPager);
+        tabLayout.setupWithViewPager(mainviewPager, true);
         setupTabIcons();
 
 
@@ -145,23 +141,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                drawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case R.id.bourse:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(HomeActivity.this, BourseActivity.class));
+
                 break;
             case R.id.proximity:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(HomeActivity.this, MapsActivity.class));
                 break;
             case R.id.convertisseur:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(HomeActivity.this, ConvertisseurActivity.class));
                 break;
             case R.id.simulateurs:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(HomeActivity.this, SimulateurActivity.class));
                 break;
             case R.id.settings:
                 startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
 
                 break;
             case R.id.apropos:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(HomeActivity.this, AboutActivity.class));
                 break;
             case R.id.logout: {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -179,14 +176,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     //animations
     private void animateTextView(float initVal, float finalVal, final TextView textView) {
         final ValueAnimator valueAnimator = ValueAnimator.ofFloat(initVal, finalVal);
-        valueAnimator.setDuration(500);
+        valueAnimator.setDuration(800);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 textView.setText(String.format("%.2f", animation.getAnimatedValue()) + " XOF");
                 Log.e("onAnimationUpdate: ", String.valueOf(animation.getAnimatedValue()));
-                if (Float.valueOf(animation.getAnimatedValue().toString()) <= Methods.getSeuil())
+
+                if (Float.valueOf(animation.getAnimatedValue().toString()) < Methods.getSeuil())
                     animateAppAndStatusBar(Color.parseColor(blue), Color.parseColor(red));
+
             }
 
         });
@@ -199,7 +198,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         coloAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                appBarLayout.setBackgroundColor((Integer) animation.getAnimatedValue());
+               /* appBarLayout.setBackgroundColor((Integer) animation.getAnimatedValue());
 
 
                 linearLayout.setBackgroundColor((Integer) animation.getAnimatedValue());
@@ -216,7 +215,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 navigationView.setItemTextColor(new ColorStateList(states, colors));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     getWindow().setStatusBarColor((Integer) animation.getAnimatedValue());
-                }
+                }*/
+                setColors((int) animation.getAnimatedValue());
 
             }
         });
@@ -240,7 +240,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             if (Methods.checkSolde()) {
                 homerel.setBackgroundColor(Color.parseColor(red));
-            }
+            } else
+                homerel.setBackgroundColor(Color.parseColor(blue));
 
             animator = ViewAnimationUtils.createCircularReveal(homerel, cx, cy, 0, finalRadius);
             animator.addListener(new Animator.AnimatorListener() {
@@ -282,6 +283,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         homerel.setVisibility(View.GONE);
         homerel1.setVisibility(View.VISIBLE);
         navigationView.setCheckedItem(R.id.home);
+        if (Methods.checkSolde()) {
+            setColors(Color.parseColor(red));
+        } else setColors(Color.parseColor(blue));
+        int x = mainviewPager.getCurrentItem();
+        mainviewPager.setCurrentItem(3);
+        mainviewPager.setCurrentItem(2);
+        mainviewPager.setCurrentItem(1);
+        mainviewPager.setCurrentItem(0);
+        mainviewPager.setCurrentItem(x);
     }
 
     //setting viewpager
@@ -313,6 +323,28 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mainPagerAdapter.addFragment(new SendFragment(), "Envoyer");
         mainPagerAdapter.addFragment(new RetireFragment(), "Retirer");
         viewPager.setAdapter(mainPagerAdapter);
+    }
+
+
+    private void setColors(int color) {
+        appBarLayout.setBackgroundColor(color);
+        linearLayout.setBackgroundColor(color);
+
+
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked}, //  checked
+                new int[]{-android.R.attr.state_checked}, // unchecked
+
+        };
+        int[] colors = new int[]{
+                color,
+                Color.DKGRAY
+        };
+        navigationView.setItemIconTintList(new ColorStateList(states, colors));
+        navigationView.setItemTextColor(new ColorStateList(states, colors));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(color);
+        }
     }
 
 

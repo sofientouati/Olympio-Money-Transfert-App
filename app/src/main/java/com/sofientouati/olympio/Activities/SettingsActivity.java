@@ -2,6 +2,7 @@ package com.sofientouati.olympio.Activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -18,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,13 +32,16 @@ import android.widget.TextView;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.SharedStrings;
+import com.sofientouati.olympio.Objects.UserObject;
 import com.sofientouati.olympio.R;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import io.realm.Realm;
 
+public class SettingsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private TextView names;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private AppBarLayout appbar;
@@ -48,7 +53,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     private ExpandableRelativeLayout coord, seuil, pass;
     private TextView coordTxt, seuilT, passTxt;
     private int red = Color.parseColor("#C62828");
+    private int blue = Color.parseColor("#0072ff");
     private AlertDialog progressDialog;
+    private Realm realm;
+    private AlertDialog d;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -61,6 +70,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 //layouts
+        realm = Realm.getDefaultInstance();
         appbar = (AppBarLayout) findViewById(R.id.settingsAppBar);
         drawerLayout = (DrawerLayout) findViewById(R.id.settingsDrawerLayout);
         navigationView = (NavigationView) findViewById(R.id.settings_nav_view);
@@ -68,7 +78,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         View view = navigationView.getHeaderView(0);
         navigationView.setCheckedItem(R.id.settings);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
-        TextView phone = (TextView) view.findViewById(R.id.textView);
+        TextView phone = (TextView) view.findViewById(R.id.phone);
+        names = (TextView) view.findViewById(R.id.name);
         imageView = (ImageView) findViewById(R.id.togglebtns);
 
         //buttons
@@ -105,6 +116,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     seuil.collapse();
                     pass.collapse();
                 }
+                if (!coord.isExpanded())
+                    nameTxt.requestFocus();
                 coord.toggle();
 
             }
@@ -118,6 +131,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     coord.collapse();
                     pass.collapse();
                 }
+                if (!seuil.isExpanded())
+                    seuilTxt.requestFocus();
                 seuil.toggle();
             }
         });
@@ -130,7 +145,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     coord.collapse();
                     seuil.collapse();
                 }
+                if (!pass.isExpanded())
+                    opassTxt.requestFocus();
                 pass.toggle();
+
             }
         });
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -143,40 +161,94 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         coordbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarde");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
                 if (!submitCoordForm()) {
                     Methods.dismissProgressBar(progressDialog);
+                    return;
+
                 }
+                PerformCoordAction();
 
             }
         });
+
+        mailTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
+                if (!submitCoordForm()) {
+                    Methods.dismissProgressBar(progressDialog);
+                    return false;
+
+                }
+                PerformCoordAction();
+                return true;
+            }
+        });
+
+
         seuilbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarde");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
                 if (!submitSeuilForm()) {
                     Methods.dismissProgressBar(progressDialog);
+                    return;
                 }
+                PerformSeuilAction();
+            }
+        });
+
+
+        seuilTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
+                if (!submitSeuilForm()) {
+                    Methods.dismissProgressBar(progressDialog);
+                    return false;
+                }
+                PerformSeuilAction();
+                return true;
             }
         });
         passbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarde");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "mettre à jours");
                 if (!submitPassForm()) {
                     Methods.dismissProgressBar(progressDialog);
+                    return;
                 }
+                PerformPassAction();
 
+            }
+        });
+
+        cnpassTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "mettre à jours");
+                if (!submitPassForm()) {
+                    Methods.dismissProgressBar(progressDialog);
+                    return false;
+                }
+                PerformPassAction();
+                return true;
             }
         });
 
 
         //actions
-        setcolors();
+        if (Methods.checkSolde())
+            setcolors(red);
+        else setcolors(blue);
 
 
         sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
-        phone.setText(sharedPreferences.getString(SharedStrings.SHARED_PHONE, ""));
+        editor = sharedPreferences.edit();
+        phone.setText(Methods.getPhone());
+        names.setText(Methods.getName() + " " + Methods.getLastname());
 
 
     }
@@ -210,22 +282,23 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 ActivityCompat.startActivity(SettingsActivity.this, new Intent(SettingsActivity.this, HomeActivity.class), null);
                 break;
             case R.id.bourse:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(SettingsActivity.this, BourseActivity.class));
+
                 break;
             case R.id.proximity:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(SettingsActivity.this, MapsActivity.class));
                 break;
             case R.id.convertisseur:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(SettingsActivity.this, ConvertisseurActivity.class));
                 break;
             case R.id.simulateurs:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(SettingsActivity.this, SimulateurActivity.class));
                 break;
             case R.id.settings:
 //                drawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case R.id.apropos:
-//                drawerLayout.closeDrawer(GravityCompat.START);
+                startActivity(new Intent(SettingsActivity.this, AboutActivity.class));
                 break;
             case R.id.logout: {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -249,46 +322,245 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     }
 
 
-    private void setcolors() {
-        if (Methods.checkSolde()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setStatusBarColor(red);
+    private void PerformCoordAction() {
+        final String name = nameTxt.getText().toString(),
+                email = mailTxt.getText().toString(),
+                lastName = lnameTxt.getText().toString();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+
+            @Override
+            public void execute(Realm realm) {
+
+
+                UserObject userObject = realm.where(UserObject.class)
+                        .equalTo("phone", Methods.getPhone())
+                        .findFirst();
+                if (!name.isEmpty()) {
+                    userObject.setName(name);
+                }
+                if (!lastName.isEmpty()) {
+                    userObject.setLastname(lastName);
+                }
+                if (!email.isEmpty()) {
+                    userObject.setEmail(email);
+                }
             }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
 
-            int[][] states = new int[][]{
-                    new int[]{android.R.attr.state_checked}, //  checked
-                    new int[]{-android.R.attr.state_checked}, // unchecked
+                d = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("succées")
+                        .setMessage("coordonnées mis à jours")
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                coord.collapse();
+                                clearText();
+                            }
+                        })
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                if (!name.isEmpty()) {
+                    editor.putString(SharedStrings.SHARED_NAME, name);
+                    Methods.setName(name);
+                }
+                if (!lastName.isEmpty()) {
+                    editor.putString(SharedStrings.SHARED_LASTNAME, lastName);
+                    Methods.setLastname(lastName);
+                }
+                if (!email.isEmpty()) {
+                    editor.putString(SharedStrings.SHARED_MAIL, email);
+                    Methods.setMail(email);
+                }
+                editor.commit();
+                names.setText(Methods.getName() + " " + Methods.getLastname());
+                if (Methods.checkSolde())
+                    setcolors(red);
+                else setcolors(blue);
+                Methods.dismissProgressBar(progressDialog);
 
-            };
-            int[] colors = new int[]{
-                    red,
-                    Color.DKGRAY
-            };
-            appbar.setBackgroundColor(red);
-            navigationView.setItemIconTintList(new ColorStateList(states, colors));
-            navigationView.setItemTextColor(new ColorStateList(states, colors));
-            linearLayout.setBackgroundColor(red);
-            Methods.setCursorDrawableColor(nameTxt, red);
-            Methods.setCursorDrawableColor(lnameTxt, red);
-            Methods.setCursorDrawableColor(mailTxt, red);
-            Methods.setCursorDrawableColor(seuilTxt, red);
-            Methods.setCursorDrawableColor(opassTxt, red);
-            Methods.setCursorDrawableColor(npassTxt, red);
-            Methods.setCursorDrawableColor(cnpassTxt, red);
-            coordbtn.setBackgroundColor(red);
-            seuilbtn.setBackgroundColor(red);
-            passbtn.setBackgroundColor(red);
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Methods.dismissProgressBar(progressDialog);
+                error.printStackTrace();
+                d = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("erreur")
+                        .setMessage("erreur de serveur")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+
+            }
+        });
+    }
+
+    private void PerformSeuilAction() {
+        final String seuilT = seuilTxt.getText().toString();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+
+
+            @Override
+            public void execute(Realm realm) {
+
+
+                UserObject userObject = realm.where(UserObject.class)
+                        .equalTo("phone", Methods.getPhone())
+                        .findFirst();
+
+                userObject.setSeuil(Float.parseFloat(seuilT));
+
+
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+
+
+                d = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("succées")
+                        .setMessage("seuil changé")
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                seuil.collapse();
+                                clearText();
+                            }
+                        })
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+
+                editor.putFloat(SharedStrings.SHARED_SEUIL, Float.parseFloat(seuilT));
+                editor.commit();
+                Methods.setSeuil(Float.parseFloat(seuilT));
+                if (Methods.checkSolde())
+                    setcolors(red);
+                else setcolors(blue);
+                Methods.dismissProgressBar(progressDialog);
+
+
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Methods.dismissProgressBar(progressDialog);
+                error.printStackTrace();
+                d = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("erreur")
+                        .setMessage("erreur de serveur")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+            }
+        });
+    }
+
+    private void PerformPassAction() {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+
+            @Override
+            public void execute(Realm realm) {
+                String opass = opassTxt.getText().toString();
+                String npass = npassTxt.getText().toString();
+                UserObject userObject = realm.where(UserObject.class)
+                        .equalTo("phone", Methods.getPhone())
+                        .findFirst();
+                if (opass.equals(userObject.getPassword()))
+                    userObject.setPassword(npass);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+
+                d = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("succées")
+                        .setMessage("mot de passe mis à jours")
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                pass.collapse();
+                                clearText();
+                            }
+                        })
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                Methods.dismissProgressBar(progressDialog);
+                if (Methods.checkSolde())
+                    setcolors(red);
+                else setcolors(blue);
+
+
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Methods.dismissProgressBar(progressDialog);
+                error.printStackTrace();
+                d = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("erreur")
+                        .setMessage("erreur de serveur")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+            }
+        });
+    }
+
+    private void setcolors(int color) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(color);
         }
+
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked}, //  checked
+                new int[]{-android.R.attr.state_checked}, // unchecked
+
+        };
+        int[] colors = new int[]{
+                color,
+                Color.DKGRAY
+        };
+        appbar.setBackgroundColor(color);
+        navigationView.setItemIconTintList(new ColorStateList(states, colors));
+        navigationView.setItemTextColor(new ColorStateList(states, colors));
+        linearLayout.setBackgroundColor(color);
+        Methods.setCursorDrawableColor(nameTxt, color);
+        Methods.setCursorDrawableColor(lnameTxt, color);
+        Methods.setCursorDrawableColor(mailTxt, color);
+        Methods.setCursorDrawableColor(seuilTxt, color);
+        Methods.setCursorDrawableColor(opassTxt, color);
+        Methods.setCursorDrawableColor(npassTxt, color);
+        Methods.setCursorDrawableColor(cnpassTxt, color);
+        coordbtn.setBackgroundColor(color);
+        seuilbtn.setBackgroundColor(color);
+        passbtn.setBackgroundColor(color);
+
     }
 
     private void clearText() {
         nameTxt.setText("");
+        nameTxt.setError(null);
         lnameTxt.setText("");
+        lnameTxt.setError(null);
         mailTxt.setText("");
+        mailTxt.setError(null);
         seuilTxt.setText("");
+        seuilTxt.setError(null);
         opassTxt.setText("");
+        opassTxt.setError(null);
         npassTxt.setText("");
+        npassTxt.setError(null);
         cnpassTxt.setText("");
+        cnpassTxt.setError(null);
     }
 
     //validating
@@ -308,7 +580,14 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             if (!validateEmptyCoord()) {
 
                 Methods.dismissProgressBar(progressDialog);
-                Methods.showSnackBar(coord, "entrer au minimum un champ pour modifier");
+                AlertDialog d = new AlertDialog.Builder(this)
+                        .setTitle("erreur")
+                        .setMessage("entrer au moin un champs pour modifier")
+                        .setPositiveButton("ok", null)
+                        .show();
+
+                d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+
                 return false;
             }
             if (!validateName(nameTxt)) {
@@ -347,8 +626,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     private boolean submitPassForm() {
 
-        if (!validatePassword(npassTxt) ||
+        if (!validatePassword(cnpassTxt) ||
+                !validatePassword(npassTxt) ||
                 !validatePassword(opassTxt)
+
                 ) {
             if (!validatePassword(opassTxt)) {
                 opassTxt.requestFocus();
@@ -356,6 +637,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             }
             if (!validatePassword(npassTxt)) {
                 npassTxt.requestFocus();
+                return false;
+            }
+            if (!validatePassword(cnpassTxt)) {
+                cnpassTxt.requestFocus();
                 return false;
             }
 
@@ -379,17 +664,13 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
 
     private boolean validateEmptyCoord() {
-        if (mailTxt.getText().toString().isEmpty() && nameTxt.getText().toString().isEmpty() && lnameTxt.getText().toString().isEmpty()) {
-
-            return false;
-        }
-        return true;
+        return !(mailTxt.getText().toString().isEmpty() && nameTxt.getText().toString().isEmpty() && lnameTxt.getText().toString().isEmpty());
     }
 
     private boolean isValidAmount() {
         String numberT = seuilTxt.getText().toString().trim();
 
-        if (numberT.isEmpty() || numberT.equals("0")) {
+        if (numberT.isEmpty()) {
             seuilTxt.setError("entrer un montant");
             return false;
         }
@@ -466,5 +747,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             return false;
         }
         return true;
+    }
+
+
+    private void updatetask() {
+
     }
 }

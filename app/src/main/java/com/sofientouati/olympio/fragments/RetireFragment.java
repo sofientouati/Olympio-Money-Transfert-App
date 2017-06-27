@@ -15,13 +15,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sofientouati.olympio.Methods;
+import com.sofientouati.olympio.Objects.ActivityObject;
 import com.sofientouati.olympio.R;
 
 import java.util.ArrayList;
+import java.util.UUID;
+
+import io.realm.Realm;
 
 /**
  * Created by sofirntouati on 17/06/17.
@@ -34,14 +39,17 @@ public class RetireFragment extends Fragment {
     private TextView max;
     private ArrayAdapter<String> adapter;
     private Button button;
-    private String
-            red = "#C62828",
-            yellow = "#F9A825",
-            blue = "#0072ff";
+    private int
+            red = Color.parseColor("#C62828"),
+    //            yellow = "#F9A825",
+    blue = Color.parseColor("#0072ff");
 
     private ArrayList<String> list;
     private AlertDialog progress;
-
+    private RelativeLayout view;
+    private TextView empty;
+    private Realm realm;
+    private AlertDialog d;
 
 
     @Nullable
@@ -49,14 +57,23 @@ public class RetireFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_retire, container, false);
         //getViews
+        realm = Realm.getDefaultInstance();
         max = (TextView) viewGroup.findViewById(R.id.max);
         number = (EditText) viewGroup.findViewById(R.id.editText);
         spinner = (Spinner) viewGroup.findViewById(R.id.spinner);
-        button = (Button) viewGroup.findViewById(R.id.button);
+        button = (Button) viewGroup.findViewById(R.id.buttonr);
+
+        view = (RelativeLayout) viewGroup.findViewById(R.id.view);
+        empty = (TextView) viewGroup.findViewById(R.id.emptyView);
+
+        if (Methods.getSolde() <= 0) {
+            view.setVisibility(View.GONE);
+            empty.setVisibility(View.VISIBLE);
+        }
         list = new ArrayList<>();
         list.add("choix de source");
         list.add("Telephone");
-        list.add("Carte de Credit");
+//        list.add("Carte de Credit");
         adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, list);
         spinner.setAdapter(adapter);
         max.setText(String.valueOf(Methods.getSolde()));
@@ -78,8 +95,8 @@ public class RetireFragment extends Fragment {
         });
 
         if (Methods.checkSolde()) {
-            Methods.setCursorDrawableColor(number, Color.parseColor(red));
-            button.setBackgroundColor(Color.parseColor(red));
+            Methods.setCursorDrawableColor(number, red);
+            button.setBackgroundColor(red);
         }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,11 +104,59 @@ public class RetireFragment extends Fragment {
                 progress = Methods.showProgressBar(getContext(), "Chargement...");
                 if (!submitForm()) {
                     Methods.dismissProgressBar(progress);
+                    return;
                 }
+                performAction();
             }
         });
 
         return viewGroup;
+    }
+
+    private void performAction() {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ActivityObject activityObject = realm.createObject(ActivityObject.class, UUID.randomUUID().toString());
+                activityObject.setSourceNumber(Methods.getPhone());
+                activityObject.setDestinationNumber(Methods.getPhone());
+                activityObject.setAmount(Float.parseFloat(number.getText().toString()));
+                activityObject.setAction("retire");
+                activityObject.setStatus("pending");
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Methods.dismissProgressBar(progress);
+                d = new AlertDialog.Builder(getContext())
+                        .setTitle("succés")
+                        .setMessage("montant a été retiré")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                else
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
+
+                number.setText("");
+
+
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                d = new AlertDialog.Builder(getContext())
+                        .setTitle("erreur")
+                        .setMessage("erreur de serveur")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                else
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
+
+            }
+        });
     }
 
     private boolean submitForm() {
@@ -115,6 +180,10 @@ public class RetireFragment extends Fragment {
 
         if (numberT.isEmpty() || numberT.equals("0")) {
             number.setError("entrer un montant");
+            return false;
+        }
+        if (Float.valueOf(numberT) > Methods.getSolde()) {
+            number.setError("solde insuffisant");
             return false;
         }
         return true;

@@ -22,8 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/textView2"
-            android:drawablePadding="5sp"
             android:drawableLeft="@drawable/ic_action_name"
+            android:drawablePadding="5sp"
             android:hint="Montant"
             android:imeOptions="actionNext"
             android:inputType="numberDecimal"
@@ -54,7 +54,7 @@
         android:layout_marginTop="40sp">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/buttond"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/rel"

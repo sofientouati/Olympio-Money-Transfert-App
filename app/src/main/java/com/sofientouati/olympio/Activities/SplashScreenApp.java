@@ -1,8 +1,6 @@
 package com.sofientouati.olympio.Activities;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -21,6 +19,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.SharedStrings;
 import com.sofientouati.olympio.R;
 
@@ -45,7 +44,8 @@ public class SplashScreenApp extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
-        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, MODE_PRIVATE);
+        Methods.getShared(sharedPreferences);
 
         imageView = (ImageView) findViewById(R.id.logoapp);
         startAnimation();

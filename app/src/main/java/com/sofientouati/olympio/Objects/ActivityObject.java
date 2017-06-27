@@ -1,12 +1,32 @@
 package com.sofientouati.olympio.Objects;
 
+import com.sofientouati.olympio.Methods;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
+
 /**
  * Created by sofirntouati on 18/06/17.
  */
 
-public class ActivityObject {
-    private String id, sourceNumber, destinationNumber, status, date, action;
+public class ActivityObject extends RealmObject {
+    @PrimaryKey
+    private String id;
+    @Required
+    private String sourceNumber, destinationNumber, status, date = Methods.setDate(), action;
     private float amount;
+//
+//    public ActivityObject(String id, String sourceNumber, String destinationNumber, String status, String date, String action, float amount) {
+//
+//        this.id = id;
+//        this.sourceNumber = sourceNumber;
+//        this.destinationNumber = destinationNumber;
+//        this.status = status;
+//        this.date = date;
+//        this.action = action;
+//        this.amount = amount;
+//    }
 
     public String getId() {
         return id;
@@ -64,14 +84,5 @@ public class ActivityObject {
         this.amount = amount;
     }
 
-    public ActivityObject(String id, String sourceNumber, String destinationNumber, String status, String date, String action, float amount) {
 
-        this.id = id;
-        this.sourceNumber = sourceNumber;
-        this.destinationNumber = destinationNumber;
-        this.status = status;
-        this.date = date;
-        this.action = action;
-        this.amount = amount;
-    }
 }

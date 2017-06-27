@@ -22,13 +22,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sofientouati.olympio.Methods;
+import com.sofientouati.olympio.Objects.ActivityObject;
 import com.sofientouati.olympio.R;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.realm.Realm;
 
 /**
  * Created by sofirntouati on 17/06/17.
@@ -37,31 +42,40 @@ import java.util.regex.Pattern;
 public class SendFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 15;
     private static final int PICK_CONTACT = 1;
+    Realm realm;
     private ViewGroup viewGroup;
     private EditText number, amount;
     private TextView max;
     private Button button;
-    private String
-            red = "#C62828",
-            yellow = "#F9A825",
-            blue = "#0072ff";
+    private int red = Color.parseColor("#C62828"),
+            blue = Color.parseColor("#0072ff");
 
     private AlertDialog progress;
+    private RelativeLayout view;
+    private TextView empty;
+    private AlertDialog d;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_send, container, false);
-        button = (Button) viewGroup.findViewById(R.id.button);
-
+        button = (Button) viewGroup.findViewById(R.id.buttons);
+        realm = Realm.getDefaultInstance();
+        view = (RelativeLayout) viewGroup.findViewById(R.id.view);
+        empty = (TextView) viewGroup.findViewById(R.id.emptyView);
         max = (TextView) viewGroup.findViewById(R.id.max);
         max.setText(String.valueOf(Methods.getSolde()));
         amount = (EditText) viewGroup.findViewById(R.id.editText);
         number = (EditText) viewGroup.findViewById(R.id.number);
         if (Methods.checkSolde()) {
-            button.setBackgroundColor(Color.parseColor(red));
-            Methods.setCursorDrawableColor(number, Color.parseColor(red));
-            Methods.setCursorDrawableColor(amount, Color.parseColor(red));
+            button.setBackgroundColor(red);
+            Methods.setCursorDrawableColor(number, red);
+            Methods.setCursorDrawableColor(amount, red);
+        }
+
+        if (Methods.getSolde() <= 0) {
+            view.setVisibility(View.GONE);
+            empty.setVisibility(View.VISIBLE);
         }
 
 
@@ -93,7 +107,10 @@ public class SendFragment extends Fragment {
                 progress = Methods.showProgressBar(getContext(), "Chargement...");
                 if (!submitForm()) {
                     Methods.dismissProgressBar(progress);
+                    return;
                 }
+                performAction();
+
             }
         });
 
@@ -123,12 +140,16 @@ public class SendFragment extends Fragment {
             amount.setError("entrer un montant");
             return false;
         }
+        if (Float.valueOf(numberT) > Methods.getSolde()) {
+            amount.setError("solde insuffisant");
+            return false;
+        }
         return true;
     }
 
     private boolean isValidNum() {
         String numberT = number.getText().toString().trim();
-        Pattern pattern = Pattern.compile("(97.*\\d{6,}$)");
+        Pattern pattern = Pattern.compile("97(\\d{6})");
         Matcher matcher = pattern.matcher(numberT);
         if (numberT.isEmpty() || !matcher.matches()) {
             number.setError("format de numéro de téléphone invalide");
@@ -137,6 +158,52 @@ public class SendFragment extends Fragment {
         return true;
     }
 
+    private void performAction() {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ActivityObject activityObject = realm.createObject(ActivityObject.class, UUID.randomUUID().toString());
+                activityObject.setSourceNumber(Methods.getPhone());
+                activityObject.setDestinationNumber(number.getText().toString());
+                activityObject.setAmount(Float.parseFloat(amount.getText().toString()));
+                activityObject.setAction("envoi");
+                activityObject.setStatus("pending");
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Methods.dismissProgressBar(progress);
+                d = new AlertDialog.Builder(getContext())
+                        .setTitle("succés")
+                        .setMessage("montant a été envoyé")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                else
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
+
+                number.setText("");
+                amount.setText("");
+
+
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                d = new AlertDialog.Builder(getContext())
+                        .setTitle("erreur")
+                        .setMessage("erreur de serveur")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                else
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
+
+            }
+        });
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

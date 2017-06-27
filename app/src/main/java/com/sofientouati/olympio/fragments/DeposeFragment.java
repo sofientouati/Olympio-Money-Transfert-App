@@ -3,11 +3,10 @@ package com.sofientouati.olympio.fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +20,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sofientouati.olympio.Methods;
+import com.sofientouati.olympio.Objects.ActivityObject;
 import com.sofientouati.olympio.R;
 
 import java.util.ArrayList;
+import java.util.UUID;
+
+import io.realm.Realm;
 
 /**
  * Created by sofirntouati on 17/06/17.
@@ -32,43 +35,43 @@ import java.util.ArrayList;
 public class DeposeFragment extends Fragment {
 
     private ViewGroup viewGroup;
+    private Realm realm;
     private Spinner spinner;
     private ArrayList<String> list;
     private ArrayAdapter<String> adapter;
 
     private EditText number;
-    private String
-            red = "#C62828",
-            yellow = "#F9A825",
-            blue = "#0072ff";
+    private int
+            red = Color.parseColor("#C62828"),
+    //            yellow = "#F9A825",
+    blue = Color.parseColor("#0072ff");
 
     private Button button;
     private AlertDialog progress;
+    private AlertDialog d;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_depose, container, false);
+
+        realm = Realm.getDefaultInstance();
         list = new ArrayList<>();
-        list.add("choix de destination");
-        list.add("Telephone");
-        list.add("Carte de Credit");
+
         spinner = (Spinner) viewGroup.findViewById(R.id.spinner);
         adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, list);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         number = (EditText) viewGroup.findViewById(R.id.editText);
-        button = (Button) viewGroup.findViewById(R.id.button);
+        button = (Button) viewGroup.findViewById(R.id.buttond);
+        list.add("choix de destination");
+        list.add("Telephone");
+//        list.add("Carte de Credit");
 
         if (Methods.checkSolde()) {
-
-            Methods.setCursorDrawableColor(number, Color.parseColor(red));
-            Drawable drawable = number.getBackground();
-            drawable.setColorFilter(Color.parseColor(red), PorterDuff.Mode.SRC_ATOP);
-            number.setBackground(drawable);
-            button.setBackgroundColor(Color.parseColor(red));
-        }
-
+            changeColor(red);
+        } else changeColor(blue);
+        spinner.setAdapter(adapter);
 
         number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -92,10 +95,12 @@ public class DeposeFragment extends Fragment {
                 progress = Methods.showProgressBar(getContext(), "Chargement...");
                 if (!submitForm()) {
                     Methods.dismissProgressBar(progress);
+                    return;
                 }
+                performACtion();
             }
         });
-        spinner.setAdapter(adapter);
+
 
         return viewGroup;
     }
@@ -139,5 +144,68 @@ public class DeposeFragment extends Fragment {
         return true;
     }
 
+    private void performACtion() {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ActivityObject activityObject = realm.createObject(ActivityObject.class, UUID.randomUUID().toString());
+                activityObject.setSourceNumber(Methods.getPhone());
+                activityObject.setDestinationNumber(Methods.getPhone());
+                activityObject.setAmount(Float.parseFloat(number.getText().toString()));
+                activityObject.setAction("depose");
+                activityObject.setStatus("pending");
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Methods.dismissProgressBar(progress);
+                d = new AlertDialog.Builder(getContext())
+                        .setTitle("succés")
+                        .setMessage("depose d'argent a été envoyé")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                else
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
 
+                number.setText("");
+                spinner.setSelection(0);
+
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                d = new AlertDialog.Builder(getContext())
+                        .setTitle("erreur")
+                        .setMessage("erreur serveur")
+                        .setPositiveButton("ok", null)
+                        .show();
+                if (Methods.checkSolde())
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                else
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
+
+            }
+        });
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (Methods.checkSolde()) {
+                changeColor(red);
+            } else
+                changeColor(blue);
+        }
+
+    }
+
+    private void changeColor(int color) {
+
+        Methods.setCursorDrawableColor(number, color);
+        Log.i("changeColor: ", String.valueOf(button));
+        button.setBackgroundColor(color);
+    }
 }
