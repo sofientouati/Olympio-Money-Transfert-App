@@ -89,7 +89,7 @@ public class GetPicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //String filePath = imageFile.getPath();
-                progress = Methods.showProgressBar(GetPicActivity.this, "chargement");
+                progress = Methods.showProgressBar(GetPicActivity.this, "chargement", false);
                 FileInputStream stream = null;
                 try {
                     stream = new FileInputStream(imageFile);

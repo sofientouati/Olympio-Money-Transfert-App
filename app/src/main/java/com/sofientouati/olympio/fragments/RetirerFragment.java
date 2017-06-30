@@ -32,7 +32,7 @@ import io.realm.Realm;
  * Created by sofirntouati on 17/06/17.
  */
 
-public class RetireFragment extends Fragment {
+public class RetirerFragment extends Fragment {
     private ViewGroup viewGroup;
     private EditText number;
     private Spinner spinner;
@@ -101,7 +101,7 @@ public class RetireFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progress = Methods.showProgressBar(getContext(), "Chargement...");
+                progress = Methods.showProgressBar(getContext(), "Chargement...", true);
                 if (!submitForm()) {
                     Methods.dismissProgressBar(progress);
                     return;

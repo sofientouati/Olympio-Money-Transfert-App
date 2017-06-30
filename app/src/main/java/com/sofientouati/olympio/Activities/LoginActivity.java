@@ -219,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void performAction() {
         if (status.equals("login")) {
-            progressDialog = Methods.showProgressBar(LoginActivity.this, "Chargement");
+            progressDialog = Methods.showProgressBar(LoginActivity.this, "Chargement", false);
             if (submitLoginForm()) {
 
 
@@ -249,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         if (status.equals("signup")) {
-            progressDialog = Methods.showProgressBar(LoginActivity.this, "Création de compte");
+            progressDialog = Methods.showProgressBar(LoginActivity.this, "Création de compte", false);
             if (submitSingupForm()) {
                 signup();
                 return;
@@ -297,7 +297,7 @@ public class LoginActivity extends AppCompatActivity {
                 Methods.dismissProgressBar(progressDialog);
                 error.printStackTrace();
                 if (error.getMessage().contains("Primary key value already exists:")) {
-                    phonesign.setError("compte déja existant avec cette numero");
+                    phonesign.setError("compte déja existant avec ce numéro");
                     phonesign.requestFocus();
                 } else Methods.showSnackBar(parent, "erreur de serveur");
             }
@@ -489,8 +489,8 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (first)
-                    v.setVisibility(View.GONE);
+//                if (first)
+//                    v.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -567,7 +567,7 @@ public class LoginActivity extends AppCompatActivity {
                 phone.setError("champs obligatoire");
                 return false;
             }
-            phone.setError("format de numéro de téléphone invalide");
+            phone.setError("numero de telephone doit être un numero MTN");
 
             return false;
         }

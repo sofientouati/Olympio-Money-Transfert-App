@@ -4,13 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Window;
@@ -144,13 +142,16 @@ public class SplashScreenApp extends AppCompatActivity {
             x.add(Manifest.permission.CAMERA);
             x.add(Manifest.permission.READ_EXTERNAL_STORAGE);
             x.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            String[] permissions = new String[10];
-            for (int i = 0; i < x.size(); i++) {
-                if (ContextCompat.checkSelfPermission(this, x.get(i)) != PackageManager.PERMISSION_GRANTED) {
-                    permissions[i] = x.get(i);
-                }
-            }
-            ActivityCompat.requestPermissions(this, new String[]{x.get(0), x.get(1), x.get(2), x.get(3)}, 1);
+            x.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            x.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+//            String[] permissions = new String[10];
+//            for (int i = 0; i < x.size(); i++) {
+//                if (ContextCompat.checkSelfPermission(this, x.get(i)) != PackageManager.PERMISSION_GRANTED) {
+//                    permissions[i] = x.get(i);
+//                    ActivityCompat.requestPermissions(this, new String[]{x.get(i)}, i);
+//                }
+//            }
+            ActivityCompat.requestPermissions(this, new String[]{x.get(0), x.get(1), x.get(2), x.get(3), x.get(4), x.get(5)}, 1);
 
 
         } else {

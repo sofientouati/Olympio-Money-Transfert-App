@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
-    android:id="@+id/parent"
     tools:context="com.sofientouati.olympio.Activities.LoginActivity">
 
     <RelativeLayout
@@ -31,7 +31,7 @@
             android:textColor="#fff"
             android:textSize="40sp"
             android:textStyle="bold"
-            android:visibility="gone" />
+            android:visibility="invisible" />
     </RelativeLayout>
 
 
@@ -42,36 +42,36 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="20sp"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <Button
             android:id="@+id/loginbtn"
-            android:layout_marginBottom="20sp"
-            android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20sp"
             android:layout_weight="1"
+            android:background="@android:color/white"
             android:text="Connexion" />
 
         <Button
             android:id="@+id/signupbtn"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Créer un Compte" />
+            android:background="@android:color/transparent"
+            android:text="Créer un Compte"
+            android:textColor="@android:color/white" />
 
 
     </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/form"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_margin="15sp"
-        android:visibility="gone">
+        android:visibility="invisible">
         <!--<TextView-->
         <!--android:id="@id/text"-->
         <!--android:layout_width="wrap_content"-->
@@ -88,19 +88,19 @@
             android:id="@+id/phoneTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10sp"
             android:background="@drawable/edittext"
             android:hint="Numéro de Télephone"
             android:imeOptions="actionNext"
-            android:nextFocusDown="@+id/logpassTxt"
-            android:layout_marginBottom="10sp"
             android:inputType="phone|textAutoComplete"
+            android:nextFocusDown="@+id/logpassTxt"
             android:padding="10sp" />
 
         <EditText
             android:id="@+id/logpassTxt"
-            android:layout_below="@id/phoneTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/phoneTxt"
             android:background="@drawable/edittext"
             android:hint="mot de passe"
             android:imeOptions="actionDone"
@@ -112,14 +112,14 @@
 
     <RelativeLayout
         android:id="@+id/signupLay"
-        android:layout_above="@id/btns"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/btns"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="40sp"
         android:layout_marginLeft="20sp"
         android:layout_marginStart="20sp"
-        android:layout_marginBottom="40sp"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <!--<TextView-->
         <!--android:id="@+id/text"-->
@@ -135,45 +135,45 @@
             android:id="@+id/signPhoneTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10sp"
             android:background="@drawable/edittext"
             android:hint="Numéro de Télephone"
             android:imeOptions="actionNext"
-            android:layout_marginBottom="10sp"
             android:inputType="phone|textAutoComplete"
             android:padding="10sp" />
         <EditText
-            android:layout_below="@id/signPhoneTxt"
             android:id="@+id/passTxt"
-            android:imeOptions="actionNext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/signPhoneTxt"
             android:background="@drawable/edittext"
             android:hint="mot de passe"
+            android:imeOptions="actionNext"
             android:inputType="textPassword"
             android:padding="10sp" />
 
 
         <EditText
             android:id="@+id/name"
-            android:layout_marginTop="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:background="@drawable/edittext"
             android:layout_below="@id/passTxt"
+            android:layout_marginTop="10sp"
+            android:background="@drawable/edittext"
             android:hint="Prénom"
+            android:imeOptions="actionNext"
             android:inputType="textPersonName"
             android:padding="10sp" />
 
         <EditText
             android:id="@+id/lastname"
-            android:layout_marginTop="10sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:background="@drawable/edittext"
             android:layout_below="@id/name"
+            android:layout_marginTop="10sp"
+            android:background="@drawable/edittext"
             android:hint="Nom"
+            android:imeOptions="actionDone"
             android:inputType="textPersonName"
             android:padding="10sp" />
 

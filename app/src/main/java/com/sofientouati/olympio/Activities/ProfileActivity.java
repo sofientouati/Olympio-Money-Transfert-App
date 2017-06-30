@@ -164,10 +164,12 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-
                     TransitionsStart();
+                else
+                    homerel.setVisibility(View.GONE);
             }
         });
+
 
     }
 

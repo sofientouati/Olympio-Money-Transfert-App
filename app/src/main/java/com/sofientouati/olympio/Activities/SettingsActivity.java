@@ -161,7 +161,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         coordbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder", true);
                 if (!submitCoordForm()) {
                     Methods.dismissProgressBar(progressDialog);
                     return;
@@ -175,7 +175,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         mailTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder", true);
                 if (!submitCoordForm()) {
                     Methods.dismissProgressBar(progressDialog);
                     return false;
@@ -190,7 +190,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         seuilbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder", true);
                 if (!submitSeuilForm()) {
                     Methods.dismissProgressBar(progressDialog);
                     return;
@@ -203,7 +203,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         seuilTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "sauvegarder", true);
                 if (!submitSeuilForm()) {
                     Methods.dismissProgressBar(progressDialog);
                     return false;
@@ -215,7 +215,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         passbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "mettre à jours");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "mettre à jours", true);
                 if (!submitPassForm()) {
                     Methods.dismissProgressBar(progressDialog);
                     return;
@@ -228,7 +228,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         cnpassTxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                progressDialog = Methods.showProgressBar(SettingsActivity.this, "mettre à jours");
+                progressDialog = Methods.showProgressBar(SettingsActivity.this, "mettre à jours", true);
                 if (!submitPassForm()) {
                     Methods.dismissProgressBar(progressDialog);
                     return false;

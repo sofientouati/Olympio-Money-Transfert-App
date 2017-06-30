@@ -133,9 +133,9 @@ public class Methods {
     }
 
     //progress bar
-    public static AlertDialog showProgressBar(Context context, String message) {
+    public static AlertDialog showProgressBar(Context context, String message, Boolean x) {
         AlertDialog progressDialog = new SpotsDialog(context);
-        if (checkSolde())
+        if (checkSolde() && x)
             progressDialog = new SpotsDialog(context, R.style.ProgressBar);
 
         progressDialog.setCancelable(true);

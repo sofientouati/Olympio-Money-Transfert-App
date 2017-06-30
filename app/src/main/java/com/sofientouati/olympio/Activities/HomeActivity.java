@@ -3,6 +3,7 @@ package com.sofientouati.olympio.Activities;
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -19,6 +20,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -35,7 +37,7 @@ import com.sofientouati.olympio.Objects.SharedStrings;
 import com.sofientouati.olympio.R;
 import com.sofientouati.olympio.fragments.ActivityFragment;
 import com.sofientouati.olympio.fragments.DeposeFragment;
-import com.sofientouati.olympio.fragments.RetireFragment;
+import com.sofientouati.olympio.fragments.RetirerFragment;
 import com.sofientouati.olympio.fragments.SendFragment;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,7 +52,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout tabLayout;
     private ViewPager mainviewPager;
     private int[] tabicons = {
-            R.drawable.ic_dashboard_white_36dp,
+            R.drawable.ic_dashboard,
             R.drawable.ic_file_upload_white_36dp,
             R.drawable.ic_near_me_white_36dp,
             R.drawable.ic_file_download_white_36dp,
@@ -59,7 +61,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             red = "#C62828",
             blue = "#0072ff";
     private RelativeLayout homerel, homerel1, parent;
-
+    private final Runnable revealRunnable = new Runnable() {
+        @Override
+        public void run() {
+            TransitionsStart();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         //getting views
         homerel = (RelativeLayout) findViewById(R.id.homerel);
+        homerel.setVisibility(View.INVISIBLE);
+
         homerel1 = (RelativeLayout) findViewById(R.id.homerel1);
         parent = (RelativeLayout) findViewById(R.id.parent);
         appBarLayout = (AppBarLayout) findViewById(R.id.mainAppBar);
@@ -99,7 +108,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    TransitionsStart();
+//                    TransitionsStart();
+                    homerel.post(revealRunnable);
                     return;
                 }
                 ActivityCompat.startActivity(HomeActivity.this, new Intent(HomeActivity.this, ProfileActivity.class), null);
@@ -121,7 +131,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     }
-
 
     @Override
     public void onBackPressed() {
@@ -225,10 +234,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    @Override
+    public View onCreateView(String name, Context context, AttributeSet attrs) {
+        return super.onCreateView(name, context, attrs);
+    }
 
     private void TransitionsStart() {
-        int cx = homerel.getWidth();
-        int cy = homerel.getTop();
+        homerel.setVisibility(View.VISIBLE);
+        int cx = parent.getWidth();
+        int cy = parent.getTop();
 
 
         float finalRadius = (float) Math.hypot(homerel.getWidth(), homerel.getHeight());
@@ -247,7 +261,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             animator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    homerel.setVisibility(View.VISIBLE);
+
                 }
 
                 @Override
@@ -298,21 +312,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void setupTabIcons() {
         TextView tabOne = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_main_tab, null);
         tabOne.setText("Activités");
-        tabOne.setCompoundDrawablesWithIntrinsicBounds(0, tabicons[0], 0, 0);
+        tabOne.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.ic_dashboard_white_36dp), null, null);
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
         TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_main_tab, null);
         tabTwo.setText("Déposer");
-        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, tabicons[1], 0, 0);
+        tabTwo.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.ic_file_upload_white_36dp), null, null);
+
         tabLayout.getTabAt(1).setCustomView(tabTwo);
 
         TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_main_tab, null);
         tabThree.setText("Envoyer");
-        tabThree.setCompoundDrawablesWithIntrinsicBounds(0, tabicons[2], 0, 0);
+
+        tabThree.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.ic_near_me_white_36dp), null, null);
         tabLayout.getTabAt(2).setCustomView(tabThree);
+
         TextView tabFour = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_main_tab, null);
         tabFour.setText("Retirer");
-        tabFour.setCompoundDrawablesWithIntrinsicBounds(0, tabicons[3], 0, 0);
+        tabFour.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.ic_file_download_white_36dp), null, null);
         tabLayout.getTabAt(3).setCustomView(tabFour);
     }
 
@@ -321,7 +338,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mainPagerAdapter.addFragment(new ActivityFragment(), "Activité");
         mainPagerAdapter.addFragment(new DeposeFragment(), "Déposer");
         mainPagerAdapter.addFragment(new SendFragment(), "Envoyer");
-        mainPagerAdapter.addFragment(new RetireFragment(), "Retirer");
+        mainPagerAdapter.addFragment(new RetirerFragment(), "Retirer");
         viewPager.setAdapter(mainPagerAdapter);
     }
 

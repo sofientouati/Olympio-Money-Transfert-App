@@ -92,7 +92,7 @@ public class DeposeFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progress = Methods.showProgressBar(getContext(), "Chargement...");
+                progress = Methods.showProgressBar(getContext(), "Chargement...", true);
                 if (!submitForm()) {
                     Methods.dismissProgressBar(progress);
                     return;
