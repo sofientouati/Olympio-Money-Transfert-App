@@ -1,61 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refresh"
+    <it.sephiroth.android.library.viewrevealanimator.ViewRevealAnimator
+        android:id="@+id/animator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:animateFirstView="true"
+        android:animationDuration="@android:integer/config_longAnimTime"
+        android:inAnimation="@anim/in_animation"
+        android:interpolator="@android:interpolator/accelerate_decelerate"
+        android:measureAllChildren="true"
+        android:outAnimation="@anim/out_animation"
+        app:vra_hideBeforeReveal="false">
 
-        <android.support.v7.widget.RecyclerView
-            android:scrollbars="vertical"
-            android:id="@+id/activityRecyclerView"
+        <FrameLayout
+            android:id="@+id/first"
             android:layout_width="match_parent"
-            android:layout_margin="10sp"
-            android:padding="10sp"
-            android:layout_height="wrap_content"
-            android:visibility="visible" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/empty_view"
+
+        <!--<include layout="@layout/activity_confirm_transaction" />-->
+        <!--<FrameLayout
+            android:id="@+id/second"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />-->
+        <!--
+                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/second"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible">
+
+
+                    <android.support.v4.widget.SwipeRefreshLayout
+                        android:id="@+id/refresh1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/activityRecyclerView1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10sp"
+                            android:padding="10sp"
+                            android:scrollbars="vertical"
+                            android:visibility="visible" />
+
+
+                    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+                    <TextView
+                        android:id="@+id/empty_view1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Aucune Activité Trouvé"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textSize="40sp"
+                        android:textStyle="bold"
+                        android:visibility="visible" />
+
+
+                </RelativeLayout>
+        -->
+
+
+    </it.sephiroth.android.library.viewrevealanimator.ViewRevealAnimator>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Aucune Activité Trouvé"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-    <!--<android.support.design.widget.AppBarLayout
-        android:elevation="2sp"
-        android:id="@+id/buttomrel"
-        android:background="#fff"
         android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:text=""
-                    android:background="@android:color/transparent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>-->
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20sp"
+        app:srcCompat="@drawable/ic_notifications_white_24dp" />
+    <!--<io.saeid.fabloading.LoadingView
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        app:mfl_duration="200"
+        app:mfl_onclickLoading="true" />-->
 
 
 </RelativeLayout>

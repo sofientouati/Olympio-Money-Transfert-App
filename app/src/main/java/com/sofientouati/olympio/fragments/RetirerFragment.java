@@ -76,7 +76,7 @@ public class RetirerFragment extends Fragment {
 //        list.add("Carte de Credit");
         adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, list);
         spinner.setAdapter(adapter);
-        max.setText(String.valueOf(Methods.getSolde()));
+        max.setText(String.format("%.2f", Methods.getSolde()));
 
         number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

@@ -26,8 +26,7 @@ import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.SharedStrings;
 import com.sofientouati.olympio.R;
 
-public class BourseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+public class CoDealersActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private AppBarLayout appbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -41,8 +40,11 @@ public class BourseActivity extends AppCompatActivity implements NavigationView.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bourse);
+        setContentView(R.layout.activity_co_dealers);
+
+
         if (getResources().getBoolean(R.bool.portrait_only)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
@@ -50,12 +52,12 @@ public class BourseActivity extends AppCompatActivity implements NavigationView.
         }
 
 
-        appbar = (AppBarLayout) findViewById(R.id.bourseAppBar);
-        drawerLayout = (DrawerLayout) findViewById(R.id.bourseDrawerLayout);
-        navigationView = (NavigationView) findViewById(R.id.bourse_nav_view);
+        appbar = (AppBarLayout) findViewById(R.id.dealerAppBar);
+        drawerLayout = (DrawerLayout) findViewById(R.id.dealerDrawerLayout);
+        navigationView = (NavigationView) findViewById(R.id.dealer_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View view = navigationView.getHeaderView(0);
-        navigationView.setCheckedItem(R.id.bourse);
+        navigationView.setCheckedItem(R.id.dealer);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
         TextView phone = (TextView) view.findViewById(R.id.phone);
         names = (TextView) view.findViewById(R.id.name);
@@ -98,31 +100,31 @@ public class BourseActivity extends AppCompatActivity implements NavigationView.
         Log.i("onNavigationItemSelected: ", String.valueOf(id));
         switch (id) {
             case R.id.home:
-                ActivityCompat.startActivity(BourseActivity.this, new Intent(BourseActivity.this, HomeActivity.class), null);
+                ActivityCompat.startActivity(CoDealersActivity.this, new Intent(CoDealersActivity.this, HomeActivity.class), null);
                 break;
-            case R.id.dealer:
-                startActivity(new Intent(BourseActivity.this, CoDealersActivity.class));
+            case R.id.bourse:
+                startActivity(new Intent(CoDealersActivity.this, BourseActivity.class));
                 break;
             case R.id.proximity:
-                startActivity(new Intent(BourseActivity.this, MapsActivity.class));
+                startActivity(new Intent(CoDealersActivity.this, MapsActivity.class));
                 break;
             case R.id.convertisseur:
-                startActivity(new Intent(BourseActivity.this, ConvertisseurActivity.class));
+                startActivity(new Intent(CoDealersActivity.this, ConvertisseurActivity.class));
                 break;
             case R.id.simulateurs:
-                startActivity(new Intent(BourseActivity.this, SimulateurActivity.class));
+                startActivity(new Intent(CoDealersActivity.this, SimulateurActivity.class));
                 break;
             case R.id.settings:
-                startActivity(new Intent(BourseActivity.this, SettingsActivity.class));
+                startActivity(new Intent(CoDealersActivity.this, SettingsActivity.class));
                 break;
             case R.id.apropos:
-                startActivity(new Intent(BourseActivity.this, AboutActivity.class));
+                startActivity(new Intent(CoDealersActivity.this, AboutActivity.class));
                 break;
             case R.id.logout: {
                 editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
-                ActivityCompat.startActivity(BourseActivity.this, new Intent(BourseActivity.this, LoginActivity.class), null);
+                ActivityCompat.startActivity(CoDealersActivity.this, new Intent(CoDealersActivity.this, LoginActivity.class), null);
                 finish();
                 break;
             }
@@ -163,4 +165,6 @@ public class BourseActivity extends AppCompatActivity implements NavigationView.
         else
             setcolors(blue);
     }
+
+
 }

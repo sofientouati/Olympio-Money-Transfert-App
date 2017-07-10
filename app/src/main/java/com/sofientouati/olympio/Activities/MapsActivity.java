@@ -156,6 +156,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.bourse:
                 ActivityCompat.startActivity(MapsActivity.this, new Intent(MapsActivity.this, BourseActivity.class), null);
                 break;
+            case R.id.dealer:
+                ActivityCompat.startActivity(MapsActivity.this, new Intent(MapsActivity.this, CoDealersActivity.class), null);
+                break;
             case R.id.proximity:
                 startActivity(new Intent(MapsActivity.this, MapsActivity.class));
                 break;
@@ -307,7 +310,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void getLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
+
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -376,7 +379,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setLocationButton(Boolean b) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
+
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,

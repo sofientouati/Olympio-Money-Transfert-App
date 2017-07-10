@@ -3,19 +3,25 @@ package com.sofientouati.olympio.fragments;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sofientouati.olympio.Activities.ConfirmTransactionActivity;
 import com.sofientouati.olympio.Adapters.ActivityRecyclerViewAdapter;
 import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.ActivityObject;
@@ -23,122 +29,110 @@ import com.sofientouati.olympio.R;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import it.sephiroth.android.library.viewrevealanimator.ViewRevealAnimator;
 
 /**
- * Created by sofirntouati on 17/06/17.
+ * Created by SOFIENTOUATI on 17/06/17.
+ * OLYMPIO APP
  */
 
 public class ActivityFragment extends Fragment {
 
     private ViewGroup viewGroup;
+
     private RecyclerView recyclerView;
     private ActivityRecyclerViewAdapter activityRecyclerViewAdapter;
     private RealmResults<ActivityObject> list;
     private SwipeRefreshLayout refresh;
     private TextView empty;
     private Realm realm;
+    private FloatingActionButton fab;
+    private ViewRevealAnimator mViewAnimator;
+    private FrameLayout first, second;
+    private RelativeLayout parent, colorview1, colorview2;
+
+
     private String
             red = "#C62828",
             yellow = "#F9A825",
             blue = "#0072ff";
     private ValueAnimator coloAnimator;
-//    private SharedPreferences sharedPreferences= getActivity().getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
+    private boolean isVisible, isStarted, firsts = true;
+    private FragmentTransaction fragmentTransaction;
+    private ConfirmTransactionActivity confirmTransactionActivity = new ConfirmTransactionActivity();
+    private ActivityListFragment activityListFragment = new ActivityListFragment();
+    private ValueAnimator valueAnimator;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        realm = Realm.getDefaultInstance();
-//        return super.onCreateView(inflater, container, savedInstanceState);
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_activity, container, false);
 
-        recyclerView = (RecyclerView) viewGroup.findViewById(R.id.activityRecyclerView);
-        refresh = (SwipeRefreshLayout) viewGroup.findViewById(R.id.refresh);
+        realm = Realm.getDefaultInstance();
 
-        if (Methods.checkSolde())
-            refresh.setColorSchemeColors(Color.parseColor(red));
-        else
-            refresh.setColorSchemeColors(Color.parseColor(blue));
-        empty = (TextView) viewGroup.findViewById(R.id.empty_view);
+        first = (FrameLayout) viewGroup.findViewById(R.id.first);
+        mViewAnimator = (ViewRevealAnimator) viewGroup.findViewById(R.id.animator);
+        parent = (RelativeLayout) viewGroup.findViewById(R.id.parent);
+        fab = (FloatingActionButton) viewGroup.findViewById(R.id.fab);
 
-        if (loadData()) {
-            recyclerView.setVisibility(View.GONE);
-            empty.setVisibility(View.VISIBLE);
-        } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            empty.setVisibility(View.GONE);
-            String color = blue;
-            if (Methods.checkSolde())
-                color = red;
-            activityRecyclerViewAdapter = new ActivityRecyclerViewAdapter(getContext(), realm.where(ActivityObject.class)
-                    .equalTo("sourceNumber", Methods.getPhone())
-                    .or()
-                    .equalTo("destinationNumber", Methods.getPhone())
-                    .findAllAsync());
-            activityRecyclerViewAdapter.notifyDataSetChanged();
-            recyclerView.setAdapter(activityRecyclerViewAdapter);
-            LinearLayoutManager k = new LinearLayoutManager(getContext());
-            k.setStackFromEnd(true);
-            k.setReverseLayout(true);
-            recyclerView.setLayoutManager(k);
+//        colorview1 = (RelativeLayout) viewGroup.findViewById(R.id.colorview1);
+//        colorview2 = (RelativeLayout) viewGroup.findViewById(R.id.colorview2);
 
-        }
-        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        fragmentTransaction = getChildFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.first, activityListFragment);
+        fragmentTransaction.commit();
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                refresh.setRefreshing(false);
-                if (loadData()) {
-                    recyclerView.setVisibility(View.GONE);
-                    empty.setVisibility(View.VISIBLE);
-                } else {
-                    empty.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    activityRecyclerViewAdapter = new ActivityRecyclerViewAdapter(getContext(), realm.where(ActivityObject.class)
-                            .equalTo("sourceNumber", Methods.getPhone())
-                            .or()
-                            .equalTo("destinationNumber", Methods.getPhone())
-                            .findAllAsync().sort("date"));
-                    activityRecyclerViewAdapter.notifyDataSetChanged();
-                    LinearLayoutManager k = new LinearLayoutManager(getContext());
-                    k.setStackFromEnd(true);
-                    k.setReverseLayout(true);
-                    recyclerView.setLayoutManager(k);
-
-                }
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), ConfirmTransactionActivity.class));
             }
         });
+
+        setColor();
+//        mViewAnimator.setOnViewAnimationListener(new ViewRevealAnimator.OnViewAnimationListener() {
+//            @Override
+//            public void onViewAnimationStarted(int i, int i1) {
+//
+//            }
+//
+//            @Override
+//            public void onViewAnimationCompleted(int i, int i1) {
+//
+//                Log.i("onViewAnimationCompleted: before", String.valueOf(mViewAnimator.getHideBeforeReveal()));
+//                if (firsts) {
+//                    Log.i("onViewAnimationCompleted: inside", String.valueOf(mViewAnimator.getHideBeforeReveal()));
+//                    mViewAnimator.setHideBeforeReveal(true);
+//
+//                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+//                        mViewAnimator.setDisplayedChild(mViewAnimator.getDisplayedChild() + 1, true,
+//                                new Point((int) fab.getX(), (int) fab.getY()));
+//
+//                }
+//                Log.i("onViewAnimationCompleted: after", String.valueOf(mViewAnimator.getHideBeforeReveal()));
+//
+//                firsts = !firsts;
+//                Log.i("onViewAnimationCompleted: ", String.valueOf(mViewAnimator.getDisplayedChild()));
+//
+//                if (mViewAnimator.getDisplayedChild() == 2)
+////                    fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_close_white_48dp));
+//                    animateFab(R.drawable.ic_close_white_48dp);
+//                if (mViewAnimator.getDisplayedChild() == 0)
+////                    fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_notifications_white_24dp));
+//                    animateFab(R.drawable.ic_notifications_white_24dp);
+//
+//            }
+//        });
+
+
         animateTextView(2000f, Methods.getSolde());
 
 
         return viewGroup;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-    }
-
-    private boolean loadData() {
-//        ArrayList<ActivityObject> list = new ArrayList<ActivityObject>();
-//        ActivityObject activityObject = new ActivityObject("1", "97532813", "97532814", "done", "21/10/14 21:20", "retiré", 40.7f);
-//        list.add(activityObject);
-//        activityObject = new ActivityObject("2", "97532814", "97532813", "pending", "21/11/14 21:20", "déposé", 1000.7f);
-//        list.add(activityObject);
-//        activityObject = new ActivityObject("3", "97532814", "97888888", "cancel", "88/88/88 88:88", "déposé", 40.7f);
-//        list.add(activityObject);
-//        activityObject = new ActivityObject("4", "97534814", "97884888", "cancel", "88/28/88 18:88", "retiré", 500.17f);
-//        list.add(activityObject);
-        Log.i("loadData: ", String.valueOf(realm.where(ActivityObject.class)
-                .equalTo("sourceNumber", Methods.getPhone())
-                .or()
-                .equalTo("destinationNumber", Methods.getPhone())
-                .count()));
-        return realm.where(ActivityObject.class)
-                .equalTo("sourceNumber", Methods.getPhone())
-                .or()
-                .equalTo("destinationNumber", Methods.getPhone())
-                .count() == 0;
-    }
 
     //animations
     private void animateTextView(float initVal, float finalVal) {
@@ -157,10 +151,15 @@ public class ActivityFragment extends Fragment {
     }
 
     private void setColor() {
-        if (Methods.checkSolde())
-            refresh.setColorSchemeColors(Color.parseColor(red));
-        else
-            refresh.setColorSchemeColors(Color.parseColor(blue));
+        if (Methods.checkSolde()) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(red)));
+//            colorview1.setBackgroundColor(Color.parseColor(red));
+//            colorview2.setBackgroundColor(Color.parseColor(red));
+        } else {
+            fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(blue)));
+//            colorview1.setBackgroundColor(Color.parseColor(blue));
+//            colorview2.setBackgroundColor(Color.parseColor(blue));
+        }
     }
 
     private void animateAppAndStatusBar(Integer fromColor, final Integer toColor) {
@@ -169,7 +168,7 @@ public class ActivityFragment extends Fragment {
         coloAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                refresh.setColorSchemeColors(Color.parseColor(red));
+                fab.setBackgroundTintList(ColorStateList.valueOf(toColor));
 
             }
         });
@@ -178,4 +177,50 @@ public class ActivityFragment extends Fragment {
         coloAnimator.start();
 
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        isStarted = true;
+        if (isVisible) {
+            setColor();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        isStarted = false;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        isVisible = isVisibleToUser;
+        if (isVisible && isStarted) {
+//            activityRecyclerViewAdapter.notifyDataSetChanged();
+            setColor();
+            FragmentTransaction fragmentTransactions = getChildFragmentManager().beginTransaction();
+            fragmentTransactions.detach(activityListFragment);
+            fragmentTransactions.attach(activityListFragment);
+            fragmentTransactions.commit();
+
+
+        }
+    }
+
+
+    private void animateFab(final int target) {
+//        valueAnimator = ValueAnimator.ofInt(0, 1).setDuration(400);
+//        valueAnimator.setInterpolator(new LinearInterpolator());
+//        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+        fab.setImageDrawable(getResources().getDrawable(target));
+//            }
+//        });
+//        valueAnimator.start();
+    }
+
 }

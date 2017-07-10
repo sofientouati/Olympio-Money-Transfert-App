@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--
+        <it.sephiroth.android.library.viewrevealanimator.ViewRevealAnimator
+            android:id="@+id/animator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:animateFirstView="true"
+            android:animationDuration="@android:integer/config_longAnimTime"
+            android:inAnimation="@anim/in_animation"
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:measureAllChildren="true"
+            android:outAnimation="@anim/out_animation"
+            app:vra_hideBeforeReveal="false">-->
+
+
+    <FrameLayout
+        android:id="@+id/first"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--<RelativeLayout
+        android:id="@+id/colorview1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <FrameLayout
+        android:id="@+id/second"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/colorview2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />-->
+
+
+    <!--
+        </it.sephiroth.android.library.viewrevealanimator.ViewRevealAnimator>
+    -->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20sp"
+        app:srcCompat="@drawable/ic_notifications_white_24dp" />
+    <!--<io.saeid.fabloading.LoadingView
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        app:mfl_duration="200"
+        app:mfl_onclickLoading="true" />-->
+
+</RelativeLayout>

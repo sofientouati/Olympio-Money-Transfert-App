@@ -567,7 +567,7 @@ public class LoginActivity extends AppCompatActivity {
                 phone.setError("champs obligatoire");
                 return false;
             }
-            phone.setError("numero de telephone doit être un numero MTN");
+            phone.setError("numero de telephone doit être un numero MTN ");
 
             return false;
         }

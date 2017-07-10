@@ -102,6 +102,9 @@ public class ConvertisseurActivity extends AppCompatActivity implements Navigati
             case R.id.bourse:
                 startActivity(new Intent(ConvertisseurActivity.this, BourseActivity.class));
                 break;
+            case R.id.dealer:
+                startActivity(new Intent(ConvertisseurActivity.this, CoDealersActivity.class));
+                break;
             case R.id.proximity:
                 startActivity(new Intent(ConvertisseurActivity.this, MapsActivity.class));
                 break;

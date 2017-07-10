@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,10 +59,11 @@ public class DeposeFragment extends Fragment {
         list = new ArrayList<>();
 
         spinner = (Spinner) viewGroup.findViewById(R.id.spinner);
-        adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, list);
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
         number = (EditText) viewGroup.findViewById(R.id.editText);
         button = (Button) viewGroup.findViewById(R.id.buttond);
+        adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, list);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         list.add("choix de destination");
         list.add("Telephone");
 //        list.add("Carte de Credit");
@@ -205,7 +205,7 @@ public class DeposeFragment extends Fragment {
     private void changeColor(int color) {
 
         Methods.setCursorDrawableColor(number, color);
-        Log.i("changeColor: ", String.valueOf(button));
+
         button.setBackgroundColor(color);
     }
 }

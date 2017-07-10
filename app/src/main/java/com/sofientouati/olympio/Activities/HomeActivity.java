@@ -43,8 +43,8 @@ import com.sofientouati.olympio.fragments.SendFragment;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    TextView balance;
     private SharedPreferences sharedPreferences;
-
     private LinearLayout linearLayout;
     private AppBarLayout appBarLayout;
     private NavigationView navigationView;
@@ -90,7 +90,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         ImageButton profile = (ImageButton) findViewById(R.id.profile);
         mainviewPager = (ViewPager) findViewById(R.id.mainViewPager);
         tabLayout = (TabLayout) findViewById(R.id.mainTabLay);
-        TextView balance = (TextView) findViewById(R.id.balanceTxt);
+        balance = (TextView) findViewById(R.id.balanceTxt);
         View view = navigationView.getHeaderView(0);
         navigationView.setCheckedItem(R.id.home);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
@@ -124,7 +124,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         //actions
-        animateTextView(2000.00f, Methods.getSolde(), balance);
         setupViewPager(mainviewPager);
         tabLayout.setupWithViewPager(mainviewPager, true);
         setupTabIcons();
@@ -146,12 +145,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.home:
-//                drawerLayout.closeDrawer(GravityCompat.START);
-                break;
             case R.id.bourse:
                 startActivity(new Intent(HomeActivity.this, BourseActivity.class));
-
+                break;
+            case R.id.dealer:
+                startActivity(new Intent(HomeActivity.this, CoDealersActivity.class));
                 break;
             case R.id.proximity:
                 startActivity(new Intent(HomeActivity.this, MapsActivity.class));
@@ -306,6 +304,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mainviewPager.setCurrentItem(1);
         mainviewPager.setCurrentItem(0);
         mainviewPager.setCurrentItem(x);
+        animateTextView(2000.00f, Methods.getSolde(), balance);
+
     }
 
     //setting viewpager

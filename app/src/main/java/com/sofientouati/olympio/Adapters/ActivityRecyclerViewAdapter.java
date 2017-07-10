@@ -69,8 +69,10 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
         if (Methods.checkSolde()) {
             holder.status.setColorFilter(Color.parseColor(red));
             holder.amount.setTextColor(Color.parseColor(red));
-        } else
+        } else {
             holder.status.setColorFilter(Color.parseColor(blue));
+            holder.amount.setTextColor(Color.parseColor(blue));
+        }
         switch (holder.object.getAction()) {
             case "depose": {
                 holder.action.setText("déposé");
@@ -223,13 +225,17 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
 
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    private void updateColor() {
+
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         ImageView status;
         TextView source, action, date, amount;
         ActivityObject object;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             source = (TextView) itemView.findViewById(R.id.number);
             action = (TextView) itemView.findViewById(R.id.action);
@@ -241,5 +247,7 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
 
         }
     }
+
+    //97649673
 
 }

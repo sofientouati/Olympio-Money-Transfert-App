@@ -7,10 +7,12 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.sofientouati.olympio.Objects.ActivityObject;
 import com.sofientouati.olympio.Objects.SharedStrings;
 
 import java.lang.reflect.Field;
@@ -18,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import dmax.dialog.SpotsDialog;
+import io.realm.Realm;
 
 /**
  * Created by SOFIEN TOUATI on 16/06/17.
@@ -176,5 +179,22 @@ public class Methods {
         return da.format(new Date());
     }
 
+    public static void datacheck(RecyclerView recyclerView, TextView empty) {
+        Realm realm = Realm.getDefaultInstance();
+        boolean x = realm.where(ActivityObject.class)
+                .equalTo("action", "envoi")
+                .equalTo("destinationNumber", Methods.getPhone())
+                .equalTo("status", "pending")
+                .count() == 0;
+        if (x) {
+            recyclerView.setVisibility(View.GONE);
+            empty.setVisibility(View.VISIBLE);
+        } else {
+            empty.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+
+        }
+
+    }
 }
 

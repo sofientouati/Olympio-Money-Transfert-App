@@ -104,7 +104,6 @@
             android:layout_below="@id/rel"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:background="@color/bluetoolbar"
             android:elevation="4sp"
             android:text="envoyer"
             android:textColor="#fff" />

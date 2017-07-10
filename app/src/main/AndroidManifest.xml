@@ -17,7 +17,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <application
         android:name=".Applications"
         android:allowBackup="true"
@@ -47,6 +46,7 @@
         <activity android:name=".Activities.ConvertisseurActivity" />
         <activity android:name=".Activities.SimulateurActivity" />
         <activity android:name=".Activities.AboutActivity" />
+        <activity android:name=".Activities.ConfirmTransactionActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -61,7 +61,8 @@
 
         <activity
             android:name=".Activities.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".Activities.CoDealersActivity"></activity>
     </application>
 
 </manifest>

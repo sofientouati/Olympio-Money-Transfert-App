@@ -78,6 +78,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         View view = navigationView.getHeaderView(0);
         navigationView.setCheckedItem(R.id.settings);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
+
         TextView phone = (TextView) view.findViewById(R.id.phone);
         names = (TextView) view.findViewById(R.id.name);
         imageView = (ImageView) findViewById(R.id.togglebtns);
@@ -106,6 +107,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         seuilT = (TextView) findViewById(R.id.text2);
         passTxt = (TextView) findViewById(R.id.text3);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
 
         coordTxt.setOnClickListener(new View.OnClickListener() {
@@ -245,8 +249,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         else setcolors(blue);
 
 
-        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
         phone.setText(Methods.getPhone());
         names.setText(Methods.getName() + " " + Methods.getLastname());
 
@@ -285,6 +287,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 startActivity(new Intent(SettingsActivity.this, BourseActivity.class));
 
                 break;
+            case R.id.dealer:
+                startActivity(new Intent(SettingsActivity.this, CoDealersActivity.class));
+
+                break;
             case R.id.proximity:
                 startActivity(new Intent(SettingsActivity.this, MapsActivity.class));
                 break;
@@ -301,6 +307,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 startActivity(new Intent(SettingsActivity.this, AboutActivity.class));
                 break;
             case R.id.logout: {
+
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();

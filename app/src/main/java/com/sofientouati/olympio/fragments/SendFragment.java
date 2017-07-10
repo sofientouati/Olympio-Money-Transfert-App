@@ -54,6 +54,8 @@ public class SendFragment extends Fragment {
     private RelativeLayout view;
     private TextView empty;
     private AlertDialog d;
+    private boolean isVisible;
+    private boolean isStarted;
 
     @Nullable
     @Override
@@ -64,14 +66,11 @@ public class SendFragment extends Fragment {
         view = (RelativeLayout) viewGroup.findViewById(R.id.view);
         empty = (TextView) viewGroup.findViewById(R.id.emptyView);
         max = (TextView) viewGroup.findViewById(R.id.max);
-        max.setText(String.valueOf(Methods.getSolde()));
+        max.setText(String.format("%.2f", Methods.getSolde()));
+
         amount = (EditText) viewGroup.findViewById(R.id.editText);
         number = (EditText) viewGroup.findViewById(R.id.number);
-        if (Methods.checkSolde()) {
-            button.setBackgroundColor(red);
-            Methods.setCursorDrawableColor(number, red);
-            Methods.setCursorDrawableColor(amount, red);
-        }
+
 
         if (Methods.getSolde() <= 0) {
             view.setVisibility(View.GONE);
@@ -113,6 +112,7 @@ public class SendFragment extends Fragment {
 
             }
         });
+        setColors();
 
         return viewGroup;
     }
@@ -153,6 +153,10 @@ public class SendFragment extends Fragment {
         Matcher matcher = pattern.matcher(numberT);
         if (numberT.isEmpty() || !matcher.matches()) {
             number.setError("format de numéro de téléphone invalide");
+            return false;
+        }
+        if (numberT.equals(Methods.getPhone())) {
+            number.setError("on ne peut pas envoyer au même numéro");
             return false;
         }
         return true;
@@ -221,6 +225,7 @@ public class SendFragment extends Fragment {
                                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
                                     null, null);
+                            assert phones != null;
                             phones.moveToFirst();
                             String x = phones.getString(phones.getColumnIndex("data1"));
                             x = x.replace(" ", "");
@@ -259,7 +264,7 @@ public class SendFragment extends Fragment {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                return;
+
 
             }
         }
@@ -281,5 +286,47 @@ public class SendFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        isStarted = true;
+        if (isVisible) {
+            if (Methods.checkSolde()) {
+                changeColor(red);
+            } else {
+                changeColor(blue);
+            }
+        }
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        isStarted = false;
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisible && isStarted)
+
+            setColors();
+    }
+
+    private void setColors() {
+        if (Methods.checkSolde()) {
+            changeColor(red);
+        } else {
+            changeColor(blue);
+        }
+    }
+
+    private void changeColor(int color) {
+
+        button.setBackgroundColor(color);
+        Methods.setCursorDrawableColor(number, color);
+        Methods.setCursorDrawableColor(amount, color);
+
+    }
 }

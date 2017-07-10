@@ -122,6 +122,7 @@ public class SplashScreenApp extends AppCompatActivity {
 
                 } else {
 
+
                     intent = new Intent(SplashScreenApp.this, HomeActivity.class);
                     ActivityCompat.startActivity(SplashScreenApp.this, intent, null);
                     finish();
@@ -136,7 +137,7 @@ public class SplashScreenApp extends AppCompatActivity {
 
     private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ArrayList<String> x = new ArrayList<String>();
+            ArrayList<String> x = new ArrayList<>();
             x.add(Manifest.permission.READ_PHONE_STATE);
             x.add(Manifest.permission.READ_CONTACTS);
             x.add(Manifest.permission.CAMERA);

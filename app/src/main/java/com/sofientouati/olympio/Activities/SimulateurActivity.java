@@ -102,6 +102,9 @@ public class SimulateurActivity extends AppCompatActivity implements NavigationV
             case R.id.bourse:
                 startActivity(new Intent(SimulateurActivity.this, BourseActivity.class));
                 break;
+            case R.id.dealer:
+                startActivity(new Intent(SimulateurActivity.this, CoDealersActivity.class));
+                break;
             case R.id.proximity:
                 startActivity(new Intent(SimulateurActivity.this, MapsActivity.class));
                 break;
