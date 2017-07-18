@@ -156,6 +156,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.bourse:
                 ActivityCompat.startActivity(MapsActivity.this, new Intent(MapsActivity.this, BourseActivity.class), null);
                 break;
+            case R.id.qrcode:
+                ActivityCompat.startActivity(MapsActivity.this, new Intent(MapsActivity.this, QRActivity.class), null);
+                break;
             case R.id.dealer:
                 ActivityCompat.startActivity(MapsActivity.this, new Intent(MapsActivity.this, CoDealersActivity.class), null);
                 break;
@@ -322,7 +325,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (location == null) {
             Log.i("showCurrentLocation: ", "null");
-            Methods.showSnackBar(appbar, "erreur");
+//            Methods.showSnackBar(appbar, "erreur");
             return;
         }
         Log.i("showCurrentLocation onConnected: ", "location : " + location);
@@ -415,7 +418,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Methods.showSnackBar(appbar, "connected");
+//        Methods.showSnackBar(appbar, "connected");
         Log.i("showCurrentLocation onConnected: ", "connected");
 
 
@@ -424,13 +427,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnectionSuspended(int i) {
-        Methods.showSnackBar(appbar, "suspended" + i);
+//        Methods.showSnackBar(appbar, "suspended" + i);
         Log.i("showCurrentLocation onConnectionSuspended: ", "suspended" + i);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Methods.showSnackBar(appbar, "failed" + connectionResult.toString());
+        Methods.showSnackBar(appbar, "erreur" + connectionResult.toString());
         Log.i("showCurrentLocation onConnectionFailed: ", "failed" + connectionResult.toString());
     }
 

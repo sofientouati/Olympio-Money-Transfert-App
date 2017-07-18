@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -71,7 +72,6 @@ public class CoDealersActivity extends AppCompatActivity implements NavigationVi
 
 
         //actions
-        //actions
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager, true);
 
@@ -83,6 +83,9 @@ public class CoDealersActivity extends AppCompatActivity implements NavigationVi
             @Override
             public void onClick(View v) {
                 drawerLayout.openDrawer(GravityCompat.START);
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
 
@@ -113,6 +116,9 @@ public class CoDealersActivity extends AppCompatActivity implements NavigationVi
         switch (id) {
             case R.id.home:
                 ActivityCompat.startActivity(CoDealersActivity.this, new Intent(CoDealersActivity.this, HomeActivity.class), null);
+                break;
+            case R.id.qrcode:
+                startActivity(new Intent(CoDealersActivity.this, QRActivity.class));
                 break;
             case R.id.bourse:
                 startActivity(new Intent(CoDealersActivity.this, BourseActivity.class));

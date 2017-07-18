@@ -194,6 +194,7 @@ public class ActivityFragment extends Fragment {
         isVisible = isVisibleToUser;
         if (isVisible && isStarted) {
 //            activityRecyclerViewAdapter.notifyDataSetChanged();
+
             setColor();
             FragmentTransaction fragmentTransactions = getChildFragmentManager().beginTransaction();
             fragmentTransactions.detach(activityListFragment);

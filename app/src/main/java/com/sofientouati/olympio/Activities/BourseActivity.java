@@ -100,6 +100,9 @@ public class BourseActivity extends AppCompatActivity implements NavigationView.
             case R.id.home:
                 ActivityCompat.startActivity(BourseActivity.this, new Intent(BourseActivity.this, HomeActivity.class), null);
                 break;
+            case R.id.qrcode:
+                startActivity(new Intent(BourseActivity.this, QRActivity.class));
+                break;
             case R.id.dealer:
                 startActivity(new Intent(BourseActivity.this, CoDealersActivity.class));
                 break;

@@ -85,7 +85,7 @@
                 android:layout_marginBottom="0dp"
                 android:layout_marginTop="0dp"
                 android:drawablePadding="10sp"
-                android:drawableStart="@drawable/ic_group_add_black_24dp"
+                android:drawableStart="@drawable/ic_contact_phone_black_24dp"
                 android:hint="Numéro"
                 android:inputType="phone" />
         </RelativeLayout>

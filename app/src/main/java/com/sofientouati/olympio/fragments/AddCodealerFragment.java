@@ -2,6 +2,7 @@ package com.sofientouati.olympio.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -47,6 +49,8 @@ public class AddCodealerFragment extends Fragment {
     private SearchView searchView;
     private AddCodealersRecyclerAdapter addCodealersRecyclerAdapter;
     private Realm realm;
+    private boolean isStarted;
+    private boolean isVisible;
 
 
     @Nullable
@@ -210,6 +214,37 @@ public class AddCodealerFragment extends Fragment {
 
         }
         return x;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        isStarted = true;
+        if (!isVisible) {
+
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        isStarted = false;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        isVisible = isVisibleToUser;
+        if (!isVisible && isStarted) {
+//            activityRecyclerViewAdapter.notifyDataSetChanged();
+
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+
+
+        }
     }
 }
 

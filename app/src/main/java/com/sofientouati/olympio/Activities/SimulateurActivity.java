@@ -111,8 +111,9 @@ public class SimulateurActivity extends AppCompatActivity implements NavigationV
             case R.id.convertisseur:
                 startActivity(new Intent(SimulateurActivity.this, ConvertisseurActivity.class));
                 break;
-            case R.id.simulateurs:
-//                drawerayout.closeDrawer(GravityCompat.START);
+            case R.id.qrcode:
+                startActivity(new Intent(SimulateurActivity.this, QRActivity.class));
+
                 break;
             case R.id.settings:
                 startActivity(new Intent(SimulateurActivity.this, SettingsActivity.class));

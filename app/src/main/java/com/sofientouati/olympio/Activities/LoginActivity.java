@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         phonelog = (AutoCompleteTextView) findViewById(R.id.phoneTxt);
         phonesign = (AutoCompleteTextView) findViewById(R.id.signPhoneTxt);
         logpass = (EditText) findViewById(R.id.logpassTxt);
-        signpass = (EditText) findViewById(R.id.passTxt);
+        signpass = (EditText) findViewById(R.id.signPassTxt);
         name = (EditText) findViewById(R.id.name);
         lastname = (EditText) findViewById(R.id.lastname);
         //others

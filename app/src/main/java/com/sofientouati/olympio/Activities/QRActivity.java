@@ -78,11 +78,7 @@ public class QRActivity extends AppCompatActivity {
                                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        qrCodeReaderView.setQRDecodingEnabled(false);
-                                        qrCodeReaderView.setQRDecodingEnabled(true);
-                                        qrCodeReaderView.stopCamera();
-                                        qrCodeReaderView.startCamera();
-
+                                        finish();
                                     }
                                 })
                                 .show();
@@ -107,10 +103,7 @@ public class QRActivity extends AppCompatActivity {
                                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        qrCodeReaderView.setQRDecodingEnabled(false);
-                                        qrCodeReaderView.setQRDecodingEnabled(true);
-                                        qrCodeReaderView.stopCamera();
-                                        qrCodeReaderView.startCamera();
+                                        finish();
 
                                     }
                                 })
@@ -156,13 +149,10 @@ public class QRActivity extends AppCompatActivity {
                             .setTitle("erreur")
                             .setMessage("qr code invalide")
                             .setCancelable(false)
-                            .setPositiveButton("confirmer", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    qrCodeReaderView.setQRDecodingEnabled(false);
-                                    qrCodeReaderView.setQRDecodingEnabled(true);
-                                    qrCodeReaderView.stopCamera();
-                                    qrCodeReaderView.startCamera();
+                                    finish();
 
                                 }
                             })
@@ -256,7 +246,12 @@ public class QRActivity extends AppCompatActivity {
                 d = new AlertDialog.Builder(QRActivity.this)
                         .setTitle("erreur")
                         .setMessage("erreur de serveur")
-                        .setPositiveButton("ok", null)
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
                         .show();
                 if (Methods.checkSolde())
                     d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);

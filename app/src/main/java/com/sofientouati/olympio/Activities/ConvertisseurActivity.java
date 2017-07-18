@@ -99,6 +99,9 @@ public class ConvertisseurActivity extends AppCompatActivity implements Navigati
             case R.id.home:
                 ActivityCompat.startActivity(ConvertisseurActivity.this, new Intent(ConvertisseurActivity.this, HomeActivity.class), null);
                 break;
+            case R.id.qrcode:
+                ActivityCompat.startActivity(ConvertisseurActivity.this, new Intent(ConvertisseurActivity.this, QRActivity.class), null);
+                break;
             case R.id.bourse:
                 startActivity(new Intent(ConvertisseurActivity.this, BourseActivity.class));
                 break;
