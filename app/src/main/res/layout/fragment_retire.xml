@@ -87,7 +87,7 @@
                 android:layout_marginTop="0dp" />
         </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,15 +96,16 @@
 
             <Button
                 android:id="@+id/buttonr"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/rel"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="@color/bluetoolbar"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="20sp"
+                android:layout_marginRight="20sp"
+                android:gravity="center"
                 android:text="retirer"
                 android:textColor="#fff" />
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
     <TextView

@@ -7,7 +7,9 @@ import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 /**
- * Created by sofirntouati on 18/06/17.
+ * OLYMPIO
+ * Created by SOFIEN TOUATI on 18/06/17.
+ *
  */
 
 public class ActivityObject extends RealmObject {
@@ -16,17 +18,6 @@ public class ActivityObject extends RealmObject {
     @Required
     private String sourceNumber, destinationNumber, status, date = Methods.setDate(), action;
     private float amount;
-//
-//    public ActivityObject(String id, String sourceNumber, String destinationNumber, String status, String date, String action, float amount) {
-//
-//        this.id = id;
-//        this.sourceNumber = sourceNumber;
-//        this.destinationNumber = destinationNumber;
-//        this.status = status;
-//        this.date = date;
-//        this.action = action;
-//        this.amount = amount;
-//    }
 
     public String getId() {
         return id;

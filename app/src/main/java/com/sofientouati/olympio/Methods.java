@@ -4,11 +4,13 @@ package com.sofientouati.olympio;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -27,7 +29,10 @@ import io.realm.Realm;
  */
 public class Methods {
 
-
+    public static int
+            red = Color.parseColor("#C62828"),
+    //            yellow = "#F9A825",
+    blue = Color.parseColor("#0072ff");
     private static float seuil = 1000f;
     private static float solde = 1420.55f;
     private static String phone;
@@ -195,6 +200,12 @@ public class Methods {
 
         }
 
+    }
+
+    public static void setButtonColor(Button button, int color) {
+        Drawable d = button.getBackground();
+        d.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        button.setBackground(d);
     }
 }
 

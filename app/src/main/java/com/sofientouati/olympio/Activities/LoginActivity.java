@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sofientouati.olympio.Methods;
+import com.sofientouati.olympio.Objects.PhonesObject;
 import com.sofientouati.olympio.Objects.SharedStrings;
 import com.sofientouati.olympio.Objects.TelephonyInfo;
 import com.sofientouati.olympio.Objects.UserObject;
@@ -281,6 +282,8 @@ public class LoginActivity extends AppCompatActivity {
                 user.setLastname(lastname.getText().toString());
                 user.setSolde(random.nextFloat() * 2000f);
                 user.setSeuil(1000.0f);
+                realm.createObject(PhonesObject.class, phonesign.getText().toString());
+
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override

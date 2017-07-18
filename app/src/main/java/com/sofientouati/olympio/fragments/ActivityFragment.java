@@ -76,8 +76,6 @@ public class ActivityFragment extends Fragment {
         parent = (RelativeLayout) viewGroup.findViewById(R.id.parent);
         fab = (FloatingActionButton) viewGroup.findViewById(R.id.fab);
 
-//        colorview1 = (RelativeLayout) viewGroup.findViewById(R.id.colorview1);
-//        colorview2 = (RelativeLayout) viewGroup.findViewById(R.id.colorview2);
 
         fragmentTransaction = getChildFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.first, activityListFragment);
@@ -91,7 +89,7 @@ public class ActivityFragment extends Fragment {
             }
         });
 
-        setColor();
+
 //        mViewAnimator.setOnViewAnimationListener(new ViewRevealAnimator.OnViewAnimationListener() {
 //            @Override
 //            public void onViewAnimationStarted(int i, int i1) {
@@ -126,8 +124,8 @@ public class ActivityFragment extends Fragment {
 //            }
 //        });
 
-
-        animateTextView(2000f, Methods.getSolde());
+        setColor();
+//        animateTextView(2000f, Methods.getSolde());
 
 
         return viewGroup;
@@ -153,12 +151,8 @@ public class ActivityFragment extends Fragment {
     private void setColor() {
         if (Methods.checkSolde()) {
             fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(red)));
-//            colorview1.setBackgroundColor(Color.parseColor(red));
-//            colorview2.setBackgroundColor(Color.parseColor(red));
         } else {
             fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(blue)));
-//            colorview1.setBackgroundColor(Color.parseColor(blue));
-//            colorview2.setBackgroundColor(Color.parseColor(blue));
         }
     }
 

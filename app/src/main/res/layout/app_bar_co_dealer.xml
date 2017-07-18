@@ -44,46 +44,37 @@
             </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/dealerTabLay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/custom_tab_layout_height"
+            android:layout_below="@id/dealertoolbar"
+            android:fitsSystemWindows="true"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="#fff"
+            app:tabSelectedTextColor="#fff"
+            app:tabTextColor="#adeeeeee" />
+
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/dealerRefresh"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/dealerViewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/dealerAppBar">
+        android:layout_height="match_parent"
+        android:layout_below="@id/dealerAppBar" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/dealerActivityRecyclerView"
-            android:layout_width="match_parent"
+    <!--
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabadd"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10sp"
-            android:scrollbars="vertical"
-            android:visibility="visible" />
-
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-
-    <TextView
-        android:id="@+id/dealerEmpty_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Aucune Transaction Trouvé"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabadd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="20sp"
-        app:srcCompat="@drawable/ic_add_white_48dp" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="20sp"
+            app:srcCompat="@drawable/ic_add_white_48dp" />
+    -->
 
 
 </RelativeLayout>

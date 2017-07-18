@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.sofientouati.olympio.Methods;
@@ -43,7 +43,10 @@ public class ConfirmActivityRecyclerViewAdapter extends RealmRecyclerViewAdapter
     private RecyclerView recyclerView;
     private TextView empty;
 
-    public ConfirmActivityRecyclerViewAdapter(Context context, OrderedRealmCollection<ActivityObject> data, RecyclerView recyclerView, TextView empty) {
+    public ConfirmActivityRecyclerViewAdapter(Context context,
+                                              OrderedRealmCollection<ActivityObject> data,
+                                              RecyclerView recyclerView,
+                                              TextView empty) {
         super(data, true);
         setHasStableIds(true);
         this.context = context;
@@ -55,8 +58,7 @@ public class ConfirmActivityRecyclerViewAdapter extends RealmRecyclerViewAdapter
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_confirm_trans, viewGroup, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -65,8 +67,12 @@ public class ConfirmActivityRecyclerViewAdapter extends RealmRecyclerViewAdapter
         viewHolder.date.setText(viewHolder.object.getDate());
         if (Methods.checkSolde()) {
             viewHolder.amount.setTextColor(Color.parseColor(red));
+            Methods.setButtonColor(viewHolder.confirm, Color.parseColor(red));
+
+
         } else {
             viewHolder.amount.setTextColor(Color.parseColor(blue));
+            Methods.setButtonColor(viewHolder.confirm, Color.parseColor(blue));
         }
 
         viewHolder.source.setText(viewHolder.object.getSourceNumber());
@@ -108,10 +114,10 @@ public class ConfirmActivityRecyclerViewAdapter extends RealmRecyclerViewAdapter
                         .equalTo("id", id)
                         .findFirst();
                 UserObject user = realm.where(UserObject.class)
-                        .equalTo("phone", Methods.getPhone())
+                        .equalTo("string", Methods.getPhone())
                         .findFirst();
                 UserObject source = realm.where(UserObject.class)
-                        .equalTo("phone", activityObject.getSourceNumber())
+                        .equalTo("string", activityObject.getSourceNumber())
                         .findFirst();
 
 
@@ -189,16 +195,17 @@ public class ConfirmActivityRecyclerViewAdapter extends RealmRecyclerViewAdapter
 
     }
 
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
-        ImageButton cancel, confirm;
+        Button cancel, confirm;
         TextView source, action, date, amount;
         ActivityObject object;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            cancel = (ImageButton) itemView.findViewById(R.id.cancel_action);
-            confirm = (ImageButton) itemView.findViewById(R.id.confirm_action);
+            cancel = (Button) itemView.findViewById(R.id.cancel);
+            confirm = (Button) itemView.findViewById(R.id.confirm);
             source = (TextView) itemView.findViewById(R.id.number);
             date = (TextView) itemView.findViewById(R.id.date);
             amount = (TextView) itemView.findViewById(R.id.amount);
@@ -206,6 +213,5 @@ public class ConfirmActivityRecyclerViewAdapter extends RealmRecyclerViewAdapter
 
         }
     }
-
 
 }

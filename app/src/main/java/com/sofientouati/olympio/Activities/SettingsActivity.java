@@ -69,6 +69,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
+        sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, MODE_PRIVATE);
 //layouts
         realm = Realm.getDefaultInstance();
         appbar = (AppBarLayout) findViewById(R.id.settingsAppBar);

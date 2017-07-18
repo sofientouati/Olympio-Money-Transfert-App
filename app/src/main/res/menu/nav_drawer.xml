@@ -12,6 +12,10 @@
             android:icon="@drawable/ic_trending_up_black_24dp"
             android:title="Bourse" />
         <item
+            android:id="@+id/qrcode"
+            android:icon="@drawable/qr_code"
+            android:title="QrCode" />
+        <item
             android:id="@+id/dealer"
             android:icon="@drawable/ic_supervisor_account_black_24dp"
             android:title="Co-Dealers" />

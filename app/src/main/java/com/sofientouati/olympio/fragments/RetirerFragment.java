@@ -96,7 +96,7 @@ public class RetirerFragment extends Fragment {
 
         if (Methods.checkSolde()) {
             Methods.setCursorDrawableColor(number, red);
-            button.setBackgroundColor(red);
+            Methods.setButtonColor(button, red);
         }
         button.setOnClickListener(new View.OnClickListener() {
             @Override

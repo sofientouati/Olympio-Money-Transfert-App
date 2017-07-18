@@ -295,11 +295,11 @@ public class GetPicActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SharedStrings.SHARED_APP_NAME, MODE_PRIVATE);
         final String phone = sharedPreferences.getString(SharedStrings.SHARED_PHONE, "");
 
-//        if (!phone.isEmpty()) {
-//            userObject.setPhone(phone);
+//        if (!string.isEmpty()) {
+//            userObject.setString(string);
 //        }
 //        userObject.setPhoto(imageb64);
-        Log.i(TAG, "saveImage: phone " + phone);
+        Log.i(TAG, "saveImage: string " + phone);
         Log.i(TAG, "saveImage: image " + imageb64);
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override

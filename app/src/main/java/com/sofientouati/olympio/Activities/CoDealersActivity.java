@@ -11,8 +11,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,17 +24,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.sofientouati.olympio.Adapters.MainPagerAdapter;
 import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.SharedStrings;
 import com.sofientouati.olympio.R;
+import com.sofientouati.olympio.fragments.AddCodealerFragment;
+import com.sofientouati.olympio.fragments.MatchedCodealerFragment;
+import com.sofientouati.olympio.fragments.RequestCodealerFragment;
 
 public class CoDealersActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private AppBarLayout appbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private LinearLayout linearLayout;
-    private TextView names;
-    private ImageView imageView;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private int red = Color.parseColor("#C62828");
@@ -60,8 +64,16 @@ public class CoDealersActivity extends AppCompatActivity implements NavigationVi
         navigationView.setCheckedItem(R.id.dealer);
         linearLayout = (LinearLayout) view.findViewById(R.id.navheaderlayout);
         TextView phone = (TextView) view.findViewById(R.id.phone);
-        names = (TextView) view.findViewById(R.id.name);
-        imageView = (ImageView) findViewById(R.id.togglebtns);
+        TextView names = (TextView) view.findViewById(R.id.name);
+        ImageView imageView = (ImageView) findViewById(R.id.togglebtns);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.dealerTabLay);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.dealerViewPager);
+
+
+        //actions
+        //actions
+        setupViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager, true);
 
 
         phone.setText(Methods.getPhone());
@@ -164,6 +176,15 @@ public class CoDealersActivity extends AppCompatActivity implements NavigationVi
             setcolors(red);
         else
             setcolors(blue);
+    }
+
+
+    private void setupViewPager(ViewPager viewPager) {
+        MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
+        mainPagerAdapter.addFragment(new RequestCodealerFragment(), "Demandes");
+        mainPagerAdapter.addFragment(new AddCodealerFragment(), "Nouveaux");
+        mainPagerAdapter.addFragment(new MatchedCodealerFragment(), "Ajoutés");
+        viewPager.setAdapter(mainPagerAdapter);
     }
 
 

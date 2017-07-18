@@ -2,7 +2,6 @@ package com.sofientouati.olympio.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -40,10 +39,7 @@ public class DeposeFragment extends Fragment {
     private ArrayAdapter<String> adapter;
 
     private EditText number;
-    private int
-            red = Color.parseColor("#C62828"),
-    //            yellow = "#F9A825",
-    blue = Color.parseColor("#0072ff");
+
 
     private Button button;
     private AlertDialog progress;
@@ -69,8 +65,8 @@ public class DeposeFragment extends Fragment {
 //        list.add("Carte de Credit");
 
         if (Methods.checkSolde()) {
-            changeColor(red);
-        } else changeColor(blue);
+            changeColor(Methods.red);
+        } else changeColor(Methods.blue);
         spinner.setAdapter(adapter);
 
         number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -165,9 +161,9 @@ public class DeposeFragment extends Fragment {
                         .setPositiveButton("ok", null)
                         .show();
                 if (Methods.checkSolde())
-                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Methods.red);
                 else
-                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Methods.blue);
 
                 number.setText("");
                 spinner.setSelection(0);
@@ -182,9 +178,9 @@ public class DeposeFragment extends Fragment {
                         .setPositiveButton("ok", null)
                         .show();
                 if (Methods.checkSolde())
-                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(red);
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Methods.red);
                 else
-                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(blue);
+                    d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Methods.blue);
 
             }
         });
@@ -195,9 +191,9 @@ public class DeposeFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (Methods.checkSolde()) {
-                changeColor(red);
+                changeColor(Methods.red);
             } else
-                changeColor(blue);
+                changeColor(Methods.blue);
         }
 
     }
@@ -205,7 +201,7 @@ public class DeposeFragment extends Fragment {
     private void changeColor(int color) {
 
         Methods.setCursorDrawableColor(number, color);
+        Methods.setButtonColor(button, color);
 
-        button.setBackgroundColor(color);
     }
 }

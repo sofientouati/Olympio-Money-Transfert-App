@@ -15,11 +15,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -27,13 +29,17 @@ import android.widget.TextView;
 
 import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.ActivityObject;
+import com.sofientouati.olympio.Objects.CodealerObject;
 import com.sofientouati.olympio.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by sofirntouati on 17/06/17.
@@ -43,13 +49,14 @@ public class SendFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 15;
     private static final int PICK_CONTACT = 1;
     Realm realm;
+    ArrayList<String> phone;
     private ViewGroup viewGroup;
-    private EditText number, amount;
+    private EditText amount;
+    private AppCompatAutoCompleteTextView number;
     private TextView max;
     private Button button;
     private int red = Color.parseColor("#C62828"),
             blue = Color.parseColor("#0072ff");
-
     private AlertDialog progress;
     private RelativeLayout view;
     private TextView empty;
@@ -69,7 +76,7 @@ public class SendFragment extends Fragment {
         max.setText(String.format("%.2f", Methods.getSolde()));
 
         amount = (EditText) viewGroup.findViewById(R.id.editText);
-        number = (EditText) viewGroup.findViewById(R.id.number);
+        number = (AppCompatAutoCompleteTextView) viewGroup.findViewById(R.id.number);
 
 
         if (Methods.getSolde() <= 0) {
@@ -157,6 +164,10 @@ public class SendFragment extends Fragment {
         }
         if (numberT.equals(Methods.getPhone())) {
             number.setError("on ne peut pas envoyer au même numéro");
+            return false;
+        }
+        if (!phone.contains(numberT)) {
+            number.setError("numéro doit être ajouté");
             return false;
         }
         return true;
@@ -296,7 +307,9 @@ public class SendFragment extends Fragment {
             } else {
                 changeColor(blue);
             }
+            loadNumbers();
         }
+
     }
 
     @Override
@@ -309,9 +322,12 @@ public class SendFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisible && isStarted)
+        isVisible = isVisibleToUser;
+        if (isVisible && isStarted) {
 
+            loadNumbers();
             setColors();
+        }
     }
 
     private void setColors() {
@@ -324,9 +340,34 @@ public class SendFragment extends Fragment {
 
     private void changeColor(int color) {
 
-        button.setBackgroundColor(color);
+        Methods.setButtonColor(button, color);
         Methods.setCursorDrawableColor(number, color);
         Methods.setCursorDrawableColor(amount, color);
 
+    }
+
+    private void loadNumbers() {
+        RealmResults<CodealerObject> codealerObjects = realm.where(CodealerObject.class)
+                .equalTo("receiver", Methods.getPhone())
+                .equalTo("status", "done")
+                .or()
+                .equalTo("sender", Methods.getPhone())
+                .equalTo("status", "done")
+                .findAll();
+        List<CodealerObject> codealerObjectArrayList = realm.copyFromRealm(codealerObjects);
+        phone = new ArrayList<>();
+        if (!codealerObjects.isEmpty())
+            for (CodealerObject c : codealerObjectArrayList
+                    ) {
+                if (c.getSender().equals(Methods.getPhone()))
+                    phone.add(c.getSender());
+                else
+                    phone.add(c.getReceiver());
+            }
+
+
+        Log.i("loadNumbers: ", String.valueOf(phone.size()));
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, phone);
+        number.setAdapter(arrayAdapter);
     }
 }

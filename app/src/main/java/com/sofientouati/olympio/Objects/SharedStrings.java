@@ -7,7 +7,7 @@ package com.sofientouati.olympio.Objects;
 public class SharedStrings {
 
     public static String SHARED_APP_NAME = "userApp";
-    public static String SHARED_PHONE = "phone";
+    public static String SHARED_PHONE = "string";
     public static String SHARED_MAIL = "MAIL";
     public static String SHARED_USERID = "userid";
     public static String SHARED_SOLDE = "solde";

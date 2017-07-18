@@ -2,6 +2,7 @@ package com.sofientouati.olympio.Objects;
 
 import java.util.UUID;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -19,7 +20,31 @@ public class UserObject extends RealmObject {
     @Required
     private String phone, password, name, lastname;
     private float solde, seuil;
+    private RealmList<PhonesObject> sent, received, matched;
 
+    public RealmList<PhonesObject> getSent() {
+        return sent;
+    }
+
+    public void setSent(RealmList<PhonesObject> sent) {
+        this.sent = sent;
+    }
+
+    public RealmList<PhonesObject> getReceived() {
+        return received;
+    }
+
+    public void setReceived(RealmList<PhonesObject> received) {
+        this.received = received;
+    }
+
+    public RealmList<PhonesObject> getMatched() {
+        return matched;
+    }
+
+    public void setMatched(RealmList<PhonesObject> matched) {
+        this.matched = matched;
+    }
 
     public String getId() {
         return id;
