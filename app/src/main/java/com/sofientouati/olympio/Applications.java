@@ -8,7 +8,9 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 import io.realm.Realm;
 
 /**
- * Created by sofirntouati on 23/06/17.
+ * OLYMPIO
+ * Created by SOFIEN TOUATI on 23/06/17.
+ *
  */
 
 public class Applications extends Application {

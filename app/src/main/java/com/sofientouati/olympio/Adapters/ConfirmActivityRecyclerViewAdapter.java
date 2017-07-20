@@ -114,10 +114,10 @@ public class ConfirmActivityRecyclerViewAdapter extends RealmRecyclerViewAdapter
                         .equalTo("id", id)
                         .findFirst();
                 UserObject user = realm.where(UserObject.class)
-                        .equalTo("string", Methods.getPhone())
+                        .equalTo("phone", Methods.getPhone())
                         .findFirst();
                 UserObject source = realm.where(UserObject.class)
-                        .equalTo("string", activityObject.getSourceNumber())
+                        .equalTo("phone", activityObject.getSourceNumber())
                         .findFirst();
 
 

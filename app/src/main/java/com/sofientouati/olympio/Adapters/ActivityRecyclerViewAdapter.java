@@ -15,11 +15,13 @@ import android.widget.TextView;
 
 import com.sofientouati.olympio.Methods;
 import com.sofientouati.olympio.Objects.ActivityObject;
+import com.sofientouati.olympio.Objects.UserObject;
 import com.sofientouati.olympio.R;
 
 import java.util.List;
 
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
 /**
@@ -37,6 +39,7 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
             red = "#C62828",
             yellow = "#F9A825",
             blue = "#0072ff";
+    private Realm realm;
 
 
 //    public ActivityRecyclerViewAdapter(List<ActivityObject> list, Context context, int color) {
@@ -49,6 +52,7 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
         super(data, true);
         setHasStableIds(true);
         this.context = context;
+        realm = Realm.getDefaultInstance();
 
     }
 
@@ -66,6 +70,7 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
 
         holder.date.setText(holder.object.getDate());
 
+
         if (Methods.checkSolde()) {
             holder.status.setColorFilter(Color.parseColor(red));
             holder.amount.setTextColor(Color.parseColor(red));
@@ -75,13 +80,15 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
         }
         switch (holder.object.getAction()) {
             case "depose": {
-                holder.action.setText("déposé");
+                holder.name.setText(Methods.getName() + " " + Methods.getLastname());
+                holder.action.setText("rechargé");
                 holder.source.setText(holder.object.getDestinationNumber());
                 holder.amount.setText("+" + String.format("%.2f", holder.object.getAmount()));
                 setStatusImage(holder.status, holder.object.getStatus(), position);
                 break;
             }
             case "retire": {
+                holder.name.setText(Methods.getName() + " " + Methods.getLastname());
                 holder.action.setText("retiré");
                 holder.source.setText(holder.object.getSourceNumber());
                 holder.amount.setText("-" + String.format("%.2f", holder.object.getAmount()));
@@ -89,7 +96,10 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
                 break;
             }
             case "envoi": {
+                UserObject other;
                 if (holder.object.getSourceNumber().equals(Methods.getPhone())) {
+                    other = realm.where(UserObject.class).equalTo("phone", holder.object.getDestinationNumber()).findFirst();
+                    holder.name.setText(other.getName() + " " + other.getLastname());
                     holder.action.setText("envoyé");
                     holder.source.setText(holder.object.getDestinationNumber());
                     holder.amount.setText("-" + String.format("%.2f", holder.object.getAmount()));
@@ -97,6 +107,8 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
 
 
                 } else {
+                    other = realm.where(UserObject.class).equalTo("phone", holder.object.getDestinationNumber()).findFirst();
+                    holder.name.setText(other.getName() + " " + other.getLastname());
                     holder.action.setText("réçu");
                     holder.source.setText(holder.object.getSourceNumber());
                     holder.amount.setText("+" + String.format("%.2f", holder.object.getAmount()));
@@ -232,7 +244,7 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         ImageView status;
-        TextView source, action, date, amount;
+        TextView source, action, date, amount, name;
         ActivityObject object;
 
         ViewHolder(View itemView) {
@@ -241,6 +253,7 @@ public class ActivityRecyclerViewAdapter extends /*RecyclerView.Adapter<Activity
             action = (TextView) itemView.findViewById(R.id.action);
             date = (TextView) itemView.findViewById(R.id.date);
             amount = (TextView) itemView.findViewById(R.id.amount);
+            name = (TextView) itemView.findViewById(R.id.name);
             cardView = (CardView) itemView.findViewById(R.id.activityCardView);
             status = (ImageView) itemView.findViewById(R.id.img);
 

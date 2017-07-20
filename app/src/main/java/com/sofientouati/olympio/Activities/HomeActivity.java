@@ -319,7 +319,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
         TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_main_tab, null);
-        tabTwo.setText("Déposer");
+        tabTwo.setText("Recharger");
         tabTwo.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.ic_file_upload_white_36dp), null, null);
 
         tabLayout.getTabAt(1).setCustomView(tabTwo);

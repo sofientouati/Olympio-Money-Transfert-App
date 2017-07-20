@@ -326,7 +326,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     protected void onResume() {
         super.onResume();
         navigationView.setCheckedItem(R.id.settings);
-
+        coord.collapse();
+        seuil.collapse();
+        pass.collapse();
     }
 
 

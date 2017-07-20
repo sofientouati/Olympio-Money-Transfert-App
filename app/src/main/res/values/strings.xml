@@ -76,4 +76,10 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_maps">Map</string>
+    <string-array name="cbtype">
+        <item>Type</item>
+        <item>VISA</item>
+        <item>Master Card</item>
+
+    </string-array>
 </resources>
